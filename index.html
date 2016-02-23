@@ -5,6 +5,10 @@ layout: default
 <div class="home">
 
   <ul class="post-list">
+      <li>
+        <span class="post-meta">{{ '2016-02-23 16:18:00 +0003' | date: "%b %-d, %Y" }}</span>
+        <h2><a class="post-link" href="{{ "slides/01introduction.html" | prepend: site.baseurl }}">Лекция №1: Введение</a></h2>
+      </li>
     {% for post in site.posts %}
       <li>
         <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
