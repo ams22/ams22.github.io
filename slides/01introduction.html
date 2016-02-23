@@ -1,0 +1,331 @@
+<html>
+<head>
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/white.css">
+</head>
+<body>
+<div class="reveal">
+    <div class="slides">
+        <section class="technotrack-title" 
+            data-background="css/theme/images/technotrack/titlebg.jpg"
+            data-background-size="contain">
+            <div class="subtitle">
+                <p>Лекция №1</p>
+            </div>
+            <h1>Введение</h1>
+            <div class="attribution">
+                <p>Николай Морев</p>
+            </div>
+        </section>
+        <section class="dark-background"
+            data-markdown
+            data-background="images/vhs-glitch.jpg">
+            <script type="text/template">
+            ## Не забудьте отметить свое посещение
+            </script>
+        </section>
+        <section>
+            <h2>Обо мне</h2>
+            <ul>
+                <li>Почта Mail.Ru и myMail для iOS</li>
+                <li>ДЕНИВИП</li>
+                <li>ЦентрТелеком</li>
+                <li>Владимирский госуниверситет, кафедра Вычислительной техники</li>
+            </ul>
+            <p>
+                <div class="icons">
+                    <img src="01introduction/about-me/ios-mail-icon.png" />
+                    <img src="01introduction/about-me/my-mail-icon.png" />
+                    <img src="01introduction/about-me/denivip-logo.png" />
+                    <img src="01introduction/about-me/photosuerte-icon.png" />
+                    <img src="01introduction/about-me/together-icon.png" />
+                    <img src="01introduction/about-me/ntv-icon.png" />
+                    <img src="01introduction/about-me/now-icon.png" />
+                    <img src="01introduction/about-me/domolink-logo.png" />
+                    <img src="01introduction/about-me/rt-logo.png" />
+                    <img src="01introduction/about-me/vlgu-logo.png" />
+                </div>
+            </p>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## Содержание
+
+            * Разработка *неигровых* приложений
+            * Правильный код на Objective-C
+            * Основы iOS SDK: базовые классы и создание UI
+            * Работа с HTTP API
+            * Хранение данных
+            * Интеграция со сторонними библиотеками, параллелизм, Swift, ... <!-- .element: style="font-size: smaller" -->
+
+            Note:
+
+            - Цель - написать приложение, практическая направленность
+            - Знакомство со средой разработки: понятия, отладка, дополнительные инструменты.
+            - Правильный код: принятые соглашения, безопасное использование, архитектура.
+            - Выглядит, как не очень много, но на самом деле этого достаточно для написания приложения.
+            - Почему не Swift: все равно нужно знать obj-c, ios - это не про язык, а про библиотеки и рантайм.
+            - Что будет сегодня: как построен курс, о работе над проектами, введение в xcode, если останется время.
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Программа курса
+
+            * 14 лекций
+            * 10 домашних заданий
+            * 3 контрольные
+            * Курсовой проект
+
+            Note:
+
+            - Домашние задания: доработки в курсовой проект.
+            - РК: вопросы по пройденному материалу.
+            - Об истории этого курса: вторая редакция, открытый курс в технопарке, 9 закончивших из 100 записавшихся, все сделали свое приложение.
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Баллы
+
+            * 100 = 45 ДЗ + 27 РК + 28 КП
+            * Сертификат
+
+            | Балл | Оценка |
+            | --- | ---: |
+            | 90 .. 100 | 5 |
+            | 70 .. 89 | 4 |
+            | 50 .. 69 | 3 |
+            | 0 .. 49 | 2 |
+
+            Note:
+
+            2. Итоги: сертификат, собственный проект и знания.
+
+        </script></section>
+        <section>
+            <section data-markdown><script type="text/template">
+                ## Проект
+
+                * Выбор вариантов
+                * Разбиение на команды
+                * Защита
+
+                Note:
+
+                - Как проходит защита: просто рассказ о проекте. Главное, чтобы было о чем рассказывать. Будет промежуточная защита.
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Требования к теме проекта
+
+                * Охватить как можно больше тем лекций
+                * Не застрять на сложных проблемах
+                  * Сложная графика или анимация
+                  * Сложные алгоритмы
+                  * Сторонние библиотеки, которые сложно интегрировать
+
+                Note:
+
+                Если вы уверены в своих силах, то ограничений нет.
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Примеры тем
+
+                * Клиент для любого сервиса с открытым API
+                  * Ленты соцсетей
+                  * Просмотр фото для облачных хранилищ
+                * Популярные проекты в App Store:
+                  * To do, Погода, чтение RSS, записная книжка, плеер музыки, обучение, тестирование, викторина, психологические тесты
+                * Несложная игра без упора на визуальную составляющую:
+                  * Виселица, Быки и коровы, Game of Life, Палочки, Балда, карточные игры, ...
+
+                Note:
+
+                - Клиент API: убедитесь, что API действительно позволит сделать то, что вы хотите и там нет критичных ограничений, например необходимость апрува приложения
+                - Если вы не уверены, как охватить темы лекций в выбранной теме, я могу подсказать
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Проекты прошлого курса
+
+                * Единая новостная лента VK, Twitter, Facebook
+                * Геобудильник
+                * Клиент для Яндекс.Денег
+                * Плеер VK
+                * Фрактальный эффект для фото
+
+                Note:
+
+                - С какими проблемами столкнулись по каждой теме
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Ваши идеи
+
+                * О себе
+                * Об идее проекта
+                * Команда: уже есть или ищете
+                * 5 минут
+
+                Note:
+
+                - Лучший вариант: то, что вы хотите реализовать
+                - Обязательно для каждого студента
+                - Озвученная идея - не обязательно выбранная, будет время, чтобы окончательно определиться
+                - Если команда уже есть, можно выступить сразу в команде
+            </script></section>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## Процесс
+
+            | | |
+            | :--- | ---: |
+            | Репозитории | [github.com/ams22](https://github.com/ams22) |
+            | Вопросы, ДЗ и пр. | [n.morev@corp.mail.ru](mailto:n.morev@corp.mail.ru) |
+            | Общий чатик | [ios16.slack.com](https://ios16.slack.com/) |
+            | Блог курса | [track.mail.ru/blog/show/8](https://track.mail.ru/blog/show/8/) |
+            | | |
+
+            Note:
+
+            - Запросить приглашения
+            - Общение не только со мной, но и с другими студентами
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Инструменты разработки
+
+            * Xcode
+            * Objective-C
+            * Мак / Хакинтош
+            * Устройство / Симулятор
+        </script></section>
+        <section>
+            <section data-markdown><script type="text/template">
+                ## Материалы
+
+                * Книги
+                * Блоги
+                * Рассылки
+                * Документация от Apple
+                * WWDC
+
+                Note:
+
+                - Английский!
+                - Более полный список появится в блоге
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Книги
+
+                * Effective Objective-C. Matt Galloway
+                * Programming with Objective-C (Apple)
+                * iOS Programming: The Big Nerd Ranch Guide
+
+                Note:
+
+                - Eff.ObjC: best practices, соглашения, особенности ObjC и сложные места
+                - PwOC: быстро познакомиться с основами языка
+                - BNRG: почти как наш курс по содержанию
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Блоги
+
+                * NSHipster
+                * Cocoa with Love
+                * NSBlog (Mike Ash)
+                * Ray Wenderlich
+                * objc.io
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Рассылки
+
+                * iOS Dev Weekly
+                * MBLTDev Digest
+                * iOS Goodies
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Apple
+
+                * Руководства
+                * Справочники
+                * WWDC
+            </script></section>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## Знакомство с Xcode
+
+            ![Storyboard XIB Outlet Action Property Project Workspace Group View Scene Controller Segue Navigator Build Settings Assets Assistant Editor](01introduction/xcode-terms.png) <!-- .element: style="box-shadow: none"  -->
+
+            Note:
+
+            http://www.wordle.net
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Следующее занятие
+
+            * 2 марта, 18:30
+            * Знакомство с Xcode и Objective-C
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Домашнее задание №0
+
+            1. Составить ТЗ
+               * Краткое описание, идея, цель, подробно функциональность
+               * Набросок UI: экраны и их содержимое, переходы
+            2. Создать репозиторий на [github.com/ams22](https://github.com/ams22)
+            3. Написать в `README` всё из п.1, а также
+               * Состав команды: имя, фамилия, github-профиль
+
+            Срок 2 недели, оценка в рамках ДЗ №2
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Домашнее задание №1
+
+            1. Посмотреть материалы по iOS
+            2. Посмотреть документацию по C и Objective-C
+            3. Установить Xcode, создать проект из шаблона, запустить его на симуляторе или на устройстве
+
+            Без оценки
+        </script></section>
+        <section class="dark-background"
+            data-markdown
+            data-background="images/apple_cat.jpg">
+            <script type="text/template">
+            ## Отзывы и оценки
+
+            Спасибо за внимание!
+
+            Николай Морев
+
+            n.morev@corp.mail.ru
+            </script>
+        </section>
+    </div>
+</div>
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+<script>
+Reveal.initialize({
+    controls: false,
+    progress: true,
+    history: true,
+    center: true,
+    slideNumber: true,
+    transition: 'slide', // none/fade/slide/convex/concave/zoom
+    showNotes: false,
+
+    // Optional reveal.js plugins
+    dependencies: [
+        { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+        { src: 'plugin/markdown/marked.js', condition: function() {
+            return !!document.querySelector( '[data-markdown]' );
+        } },
+        { src: 'plugin/markdown/markdown.js', condition: function() {
+            return !!document.querySelector( '[data-markdown]' );
+        } },
+        { src: 'plugin/highlight/highlight.js', async: true, callback: function() {
+            hljs.initHighlightingOnLoad();
+        } },
+        { src: 'plugin/zoom-js/zoom.js', async: true },
+        { src: 'plugin/notes/notes.js', async: true }
+    ]
+});
+</script>
+</body>
+</html>

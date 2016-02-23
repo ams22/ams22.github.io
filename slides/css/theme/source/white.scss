@@ -1,0 +1,152 @@
+/**
+ * White theme for reveal.js. This is the opposite of the 'black' theme.
+ *
+ * By Hakim El Hattab, http://hakim.se
+ */
+
+
+// Default mixins and settings -----------------
+@import "../template/mixins";
+@import "../template/settings";
+// ---------------------------------------------
+
+
+// Include theme-specific fonts
+@import url(../../lib/font/pt-sans/pt-sans.css);
+@import url(../../lib/font/pt-serif-caption/pt-serif-caption.css);
+
+
+// Override theme settings (see ../template/settings.scss)
+$backgroundColor: #fff;
+
+$mainColor: #222;
+$headingColor: #222;
+$technotrackRed: #d20100;
+
+$mainFontSize: 38px;
+$mainFont: 'PT Sans', Helvetica, sans-serif;
+$headingFont: 'PT Serif Caption', Helvetica, sans-serif;
+$headingTextShadow: none;
+$headingLetterSpacing: normal;
+$headingTextTransform: none;
+$headingFontWeight: 400;
+$linkColor: #2a76dd;
+$linkColorHover: lighten( $linkColor, 15% );
+$selectionBackgroundColor: lighten( $linkColor, 25% );
+
+$heading1Size: 2.5em;
+$heading2Size: 1.6em;
+$heading3Size: 1.3em;
+$heading4Size: 1.0em;
+
+$darkBackgroundOutlineColor: rgba(0, 0, 0, 0.1);
+
+@mixin hasDarkBackground() {
+	&, h1, h2, h3, h4, h5, h6 {
+		color: #fff;
+        text-shadow: -1px -1px 0 $darkBackgroundOutlineColor,
+                      1px -1px 0 $darkBackgroundOutlineColor,
+                     -1px  1px 0 $darkBackgroundOutlineColor,
+                      1px  1px 0 $darkBackgroundOutlineColor;
+	}
+}
+
+div.has-dark-background,
+section.has-dark-background,
+section.dark-background {
+    @include hasDarkBackground();
+}
+
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------
+
+.reveal {
+    h1, h2, h3, h4, h5, h6 {
+        color: $technotrackRed;
+    }
+
+    h2 {
+        margin-bottom: 5%;
+        padding-bottom: 0.2em;
+        border-bottom: 7px solid $technotrackRed;
+        text-align: left;
+    }
+
+    .has-dark-background, .dark-background {
+        h2 {
+            border-bottom-color: #fff;
+        }
+    }
+
+    .slides > section {
+        padding-bottom: 10%;
+        background-image: url(images/technotrack/logo.png);
+        background-repeat: no-repeat;
+        background-position: 100% 20px;
+        background-size: 75px;
+
+        &.dark-background {
+            background-image: url(images/technotrack/logo-white.png);
+        }
+
+        &.technotrack-title {
+            padding-bottom: 0;
+            background: none;
+
+            height: 100%;
+            text-align: right;
+
+            .subtitle {
+                @include hasDarkBackground();
+                margin-top: 15%;
+            }
+
+            h1 {
+                @include hasDarkBackground();
+                position: absolute;
+                bottom: 25%;
+                right: 0;
+            }
+
+            .attribution {
+                position: absolute;
+                bottom: 0%;
+                right: 0;
+                color: $technotrackRed;
+            }
+        }
+
+        img {
+            border: none;
+        }
+
+        div.icons img {
+            vertical-align: bottom;
+            width: auto;
+            height: 80px
+        }
+    }
+
+    .slide-number {
+        right: 4%;
+        bottom: 4%;
+        width: 2.4em;
+        height: 2.4em;
+        font-family: $mainFont;
+        font-size: 14px;
+        color: #fff;
+        background-color: $technotrackRed;
+        padding: 5px;
+        text-align: center;
+        display: inline-block;
+        border-radius: 50%;
+
+        span.slide-number-a {
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 2.4em;
+        }
+    }
+}
+
