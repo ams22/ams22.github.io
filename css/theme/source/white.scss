@@ -14,6 +14,7 @@
 // Include theme-specific fonts
 @import url(../../lib/font/pt-sans/pt-sans.css);
 @import url(../../lib/font/pt-serif-caption/pt-serif-caption.css);
+@import url(../../lib/font/ubuntu-mono/ubuntu-mono.css);
 
 
 // Override theme settings (see ../template/settings.scss)
@@ -147,6 +148,10 @@ section.dark-background {
             vertical-align: middle;
             line-height: 2.4em;
         }
+    }
+
+    pre, code {
+        font-family: "Ubuntu Mono", monospace;
     }
 }
 
