@@ -14,6 +14,7 @@
 // Include theme-specific fonts
 @import url(../../lib/font/pt-sans/pt-sans.css);
 @import url(../../lib/font/pt-serif-caption/pt-serif-caption.css);
+@import url(../../lib/font/ubuntu-mono/ubuntu-mono.css);
 
 
 // Override theme settings (see ../template/settings.scss)
@@ -51,12 +52,6 @@ $darkBackgroundOutlineColor: rgba(0, 0, 0, 0.1);
 	}
 }
 
-div.has-dark-background,
-section.has-dark-background,
-section.dark-background {
-    @include hasDarkBackground();
-}
-
 // Theme template ------------------------------
 @import "../template/theme";
 // ---------------------------------------------
@@ -68,12 +63,14 @@ section.dark-background {
 
     h2 {
         margin-bottom: 5%;
+        padding-right: 77px; // Отступ для логотипа
         padding-bottom: 0.2em;
         border-bottom: 7px solid $technotrackRed;
         text-align: left;
     }
 
     .has-dark-background, .dark-background {
+        @include hasDarkBackground();
         h2 {
             border-bottom-color: #fff;
         }
@@ -88,6 +85,10 @@ section.dark-background {
 
         &.dark-background {
             background-image: url(images/technotrack/logo-white.png);
+        }
+
+        &.no-logo {
+            background-image: none;
         }
 
         &.technotrack-title {
@@ -119,6 +120,7 @@ section.dark-background {
 
         img {
             border: none;
+            box-shadow: none;
         }
 
         div.icons img {
@@ -148,5 +150,50 @@ section.dark-background {
             line-height: 2.4em;
         }
     }
+
+    pre, code {
+        font-family: "Ubuntu Mono", monospace;
+    }
+}
+
+@mixin dimFilter($opacity) {
+    -webkit-filter: opacity($opacity);
+    -moz-filter: opacity($opacity);
+    -o-filter: opacity($opacity);
+    -ms-filter: opacity($opacity);
+    filter: opacity($opacity);
+}
+
+html.dim .backgrounds {
+    @include dimFilter(0.5);
+}
+
+@-webkit-keyframes blur-animation {
+    0% {
+        -webkit-filter: blur(0px);
+        -moz-filter: blur(0px);
+        -o-filter: blur(0px);
+        -ms-filter: blur(0px);
+        filter: blur(0px);
+
+    }
+    100% {
+        -webkit-filter: blur(4px) opacity(0.5);
+        -moz-filter: blur(5px) opacity(0.5);
+        -o-filter: blur(5px) opacity(0.5);
+        -ms-filter: blur(5px) opacity(0.5);
+        filter: blur(5px) opacity(0.5);
+
+    }
+}
+
+html.background-blur-animation .backgrounds {
+    -webkit-animation-name: blur-animation;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-direction: alternate;
+    -webkit-animation-timing-function: ease-out;
+    -webkit-animation-fill-mode: forwards;
+    -webkit-animation-delay: 0s;
 }
 
