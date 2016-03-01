@@ -1,0 +1,576 @@
+<html>
+<head>
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/white.css">
+    <link rel="stylesheet" href="lib/css/xcode.css">
+</head>
+<body>
+<div class="reveal">
+    <div class="slides">
+        <section class="technotrack-title" 
+            data-background="css/theme/images/technotrack/titlebg.jpg"
+            data-background-size="contain">
+            <div class="subtitle">
+                <p>Лекция №2</p>
+            </div>
+            <h1>Objective&#8209;C</h1>
+            <div class="attribution">
+                <p>Николай Морев</p>
+            </div>
+        </section>
+        <section class="dark-background"
+            data-markdown
+            data-background="images/vhs-glitch.jpg">
+            <script type="text/template">
+            ## Не забудьте отметить свое посещение*
+
+            \* Не влияет на оценку
+            </script>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## На прошлом занятии
+
+            * Знакомство с Xcode
+            * Самостоятельно: основы Objective-C по [Programming with Objective-C](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC)
+
+            Note:
+
+            - Только слушать лекции недостаточно, самостоятельная работа очень важна
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## На этом занятии
+
+            * История Objective-C
+            * Основные конструкции
+            * Основные типы, работа с коллекциями
+            * Особенности ООП
+            * Управление памятью
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Материалы
+
+            * [Programming with Objective-C](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC)
+            * [Concepts in Objective-C Programming](https://developer.apple.com/library/ios/documentation/General/Conceptual/CocoaEncyclopedia/)
+            * [Advanced Memory Management Programming Guide](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/MemoryMgmt.html)
+            * [Objectively Speaking: A Crash Course in Objective-C for iOS 6](http://www.raywenderlich.com/21320/objectively-speaking-a-crash-course-in-objective-c-ios6)
+            * Google: Objective-C Style Guide
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## История Objective-C
+
+            * 1983
+            * Основа — *C*
+              * Синтаксис, базовые типы, указатели, статическая типизация
+              * Компилятор, полная обратная совместимость
+            * Идеи из *Smalltalk*
+              * Message passing, динамическая типизация
+              * Объектно-ориентированность
+              * Introspection и Reflection
+
+            Note:
+
+            - 1983 - одновременно с C++, т.е. идеи ООП входят в моду
+            - еще не было Java и C#, не появились большинство из сегодняшних динамических языков: Ruby, Perl, Lua, Python, PHP, JavaScript.
+            - А что было? Smalltalk популярен благодаря динамизму, C - стандарт де-факто, как и сейчас
+            - Именно из-за совместимости с C в языке осталось много странностей
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Типы
+
+            | | |
+            | --- | ---: |
+            | Скаляры | `int`, `float`, `double` |
+            | Структуры, 0-terminated строки | `struct`, `char[]` |
+            | Указатели | `void*` |
+            | | |
+            | Классы и объекты | `NSObject*` |
+            | Динамический тип | `id` |
+            | Пустой объект | `nil` |
+
+            Note:
+
+            - Смесь сишных типов и объектов
+            - С ними работают по-разному
+            - Хотя возможность использовать C очень полезна в некоторых ситуациях, стараемся избегать использовать сишные типы, работу с указателями и вообще C-подобный код, для всего этого есть замена в Foundation
+            - Одно из немногих мест, где указатели используются не как простой шаблон - передача параметров по ссылке
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Необъектные типы в SDK
+
+            * Скаляры `NSInteger`, `NSUInteger`, `BOOL`, `CGFloat`
+            * Структуры `NSRange`, `CGPoint` и другие
+        </script></section>
+        <section data-markdown
+            class="no-logo"
+            data-background="02objc1/carousel.png"
+            data-background-size="contain"><script type="text/template">
+        </script></section>
+        <section data-markdown
+            data-state="background-blur-animation"
+            data-background="02objc1/carousel.png"
+            data-background-size="contain"><script type="text/template">
+            ## MerryGoRound.app
+
+            * **Построение модели предметной области**
+            * Формирование запросов к сервису
+            * Отображение полученных данных
+            * Кэширование данных
+
+            Note:
+
+            - Референсное приложение - просмотр фото и видео из Dropbox
+            - Модель предметной области - набор понятий (существительные и глаголы - сущности и действия), которые встречаются при описании цели, задач, функциональности
+            - Часть из этих сущностей становятся классами модели
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Типовая архитектура
+
+            ![Слои](02objc1/architecture-layers.svg)
+
+            Note:
+
+            - Обратимся к той части, где требуется только знание языка и не нужно знать SDK - к модели
+            - Чтобы абстрагироваться от визуальной части, будем работать с юнит-тестами
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Модель предметной области
+
+            ![Модель](02objc1/model.svg)
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Объявление класса
+
+            * Интерфейс + реализация
+            * Инкапсуляция
+            * Контракты
+            * Разделение публичных и приватных свойств/методов
+
+            Note:
+
+            - публичный интерфейс - это контракт, он должен быть максимально специфичным и в нем не должно быть ничего лишнего
+            - В коде описываются все возможных ограничения
+            - nullability, generics - в интерфейсе
+            - assertions - в имплементации
+            - Почему важно крэшиться как можно раньше
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Объявление класса
+
+            ```objectivec
+            // .h
+            @interface MGRNode : NSObject
+            @end
+
+            // .m
+            @interface MGRNode ()
+            @end
+
+            @implementation MGRNode
+            @end
+            ```
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Категории
+
+            ```objectivec
+            @interface MGRFile (MGRDropboxParser)
+            @end
+            ```
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Протоколы
+
+            ```objectivec
+            @protocol MGRNode <NSObject>
+            @end
+            ```
+
+            Note:
+
+            - Нет абстрактных классов, нет множественного наследования
+            - Протокол задает контракт, независимый от конкретного класса
+            - Протокол прячет конкретный класс, когда нужно скрыть от потребителя какой именно это класс или возможность создать экзмепляр этого класса
+            - Паттерн делегирование
+            - @optional, respondsToSelector:
+            - Наследование протоколов
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Создание объектов
+
+            * `alloc`, `init`
+            * Factory method
+            * Literal syntax
+            * `dealloc`
+
+            ```objectivec
+            NSObject *object = [[NSObject alloc] init];
+            NSString *string = [[NSString alloc] initWithFormat:@"%f", 3.1415926];
+            NSNumber *number = [NSNumber numberWithInteger:23];
+            NSArray *array = @[ @23, @"abc" ];
+            ```
+
+            Note:
+
+            - alloc выделяет память под "структуру" объекта
+            - WithType или FromSource
+            - init может вернуть nil
+            - Factory method как замена инициализатора - не рекомендуется
+            - Может использоваться для синглтонов и тому подобного
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Инициализация объектов
+
+            ```objectivec
+            - (instancetype)initWithDropboxID:(NSString *)dropboxID
+            name:(NSString *)name path:(NSString *)path {
+                if (self = [super init]) {
+                }
+                return self;
+            }
+            ```
+
+            * Designated/convenience initializer
+            * Рантайм-контракты: валидация, assertions
+
+            Note:
+
+            - Цепочка initializer-ов и правила, связанные с designated
+            - инициализатор всегда начинается с init
+            - вызов super, проверка на nil, задание свойств
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Вызов методов
+
+            ```objectivec
+            NSError *error;
+            BOOL written = [data writeToFile:path options:NSDataWritingAtomic error:&error];
+
+            // Class method
+            BOOL valid = [NSJSONSerialization isValidJSONObject:@{ @"abc" : @23 }];
+            ```
+
+            * Селектор `writeToFile:options:error:`
+
+            Note:
+
+            - Селектор и его структура
+            - Селектор и метод - не одно и то же, хотя понятия часто используются взаимозаменяемо
+            - Динамическая сущность message passing
+            - self, super
+            - Сишные функции вызываются как принято в C
+        </script></section>
+        <section>
+            <h2>Объявление методов</h2>
+
+<pre><code class="lang-objectivec hljs" data-trim>
+- (BOOL)writeToFile:(NSString *)path 
+            options:(NSDataWritingOptions)writeOptionsMask
+              error:(NSError **)errorPtr;
+
+// Class method
++ (BOOL)isValidJSONObject:(id)obj;
+</code></pre>
+
+            <aside class="notes">
+            </aside>
+
+        </section>
+        <section data-markdown><script type="text/template">
+            ## Свойства объекта
+
+            * Инкапсуляция
+            * Атрибуты
+
+            ```objectivec
+            @property (nonatomic) BOOL valid;
+            @property (nonatomic, copy, nonnull) NSString *message;
+
+            // Обращение к свойству
+            NSString *message = object.message;
+            object.message = @"Hello!";
+
+            // То же самое, что и
+            NSString *message = [object message];
+            [object setMessage:@"Hello!"];
+            ```
+
+            Note:
+
+            - Физическое представление объекта в памяти: указатель на структуру
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## ivar + getter/setter
+
+            ```objectivec
+            @implementation {
+                NSString *_message;
+            }
+
+            - (NSString *)message {
+                return _message;
+            }
+
+            - (void)setMessage:(NSString *)message {
+                _message = [message copy];
+            }
+
+            @end
+            ```
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Атрибуты свойств
+
+            * `nullable`, `nonnull`
+            * **`strong`**, `weak`, `unsafe_unretained`, copy
+            * **`atomic`**, `nonatomic`
+            * **`readwrite`**, `readonly`
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Базовый класс NSObject
+
+            ```objectivec
+            @protocol NSObject
+            - (BOOL)isEqual:(id)object;
+            @property (readonly) NSUInteger hash;
+            @property (readonly, copy) NSString *description;
+            - (instancetype)init NS_DESIGNATED_INITIALIZER;
+
+            @interface NSObject <NSObject>
+            + (void)initialize;
+
+            @protocol NSCopying
+            - (id)copyWithZone:(nullable NSZone *)zone;
+
+            ```
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Вывод объекта в консоль
+
+            ```objectivec
+            NSLog(@"%@", object);
+            ```
+
+            ```
+            lldb> po object
+            ```
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Объекты-значения
+
+            * Небольшой
+            * Представляет одну сущность
+            * Равенство зависит от содержимого
+            * Немутабельный
+            * Например, `NSString`
+
+            Note:
+
+            - Какие объекты не нужно делать value-object
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Классы Foundation
+
+            * NSString/NSMutableString
+            * NSNumber
+            * NSDate
+            * NSURL
+            * [developer.apple.com/library/mac/documentation
+            /Cocoa/Reference/Foundation/ObjC_classic](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/ObjC_classic/)
+
+            Note:
+
+            - Что такое NS?
+            - В отличие от C-шных строк, NSString не имеет определенного бинарного представления, это просто текст
+            - Преобразование в разные кодировки и бинарные форматы, чтение/запись в файл, подстроки, конкатенация, формат, поиск, сравнение, очень мощная поддержка юникода.
+            - NSNumber - это Class Cluster, когда за общим публичным интерфейсом прячутся различные подклассы
+            - date + time, NSDateFormatter, сравнение, преобразование из/в unix time, NSDateComponents
+            - http://infiniteundo.com/post/25326999628/falsehoods-programmers-believe-about-time
+            - создание URL из строки, получение частей URL, NSURLComponents. Для файлов на диске тоже часто используются URL.
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Mutability
+
+            * Почему immutable - это хорошо?
+            * `copy`/`mutableCopy`
+
+            Note:
+
+            - Что такое mutable? Immutable дают гарантию, что объект, который вы используете не изменится неожиданно в какой-то другой части системы.
+            - mutable - это рантайм оверхед и меньшие возможности для оптимизации в compile time
+            - copy/mutableCopy
+            - это тоже Class Cluster, только с публичными классами
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Коллекции Foundation
+
+            * NSArray/NSMutableArray
+            * NSDictionary/NSMutableDictionary
+            * NSSet/NSMutableSet
+
+            Note:
+
+            - Проход по коллекциям
+            - Изменение mutable коллекции во время прохода
+            - Не рекомендуется хранить мутабельные объекты в коллекциях (может измениться hash)
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Соглашения
+
+            * Имена: выразительные, но не излишне подробные
+            * Никаких сокращений, кроме общепринятых
+            * Camel-case
+            * Префиксы для классов, глобальных переменных, перечислений, методов в категориях
+            * Некоторые правила именования важны для компилятора или рантайма
+            * Code Style
+
+            Note:
+
+            - Соглашения очень важны
+            - Код должен читаться близко к естественному языку
+            - Например, init, set
+        </script></section>
+        <section class="no-logo"
+            data-background="02objc1/codestyle.jpg"
+            data-background-size="contain">
+        </section>
+        <section data-markdown><script type="text/template">
+            ## Демо
+
+            * Иерархия классов
+            * Дерево инстансов
+            * Вывод в консоль
+            * Юнит-тесты
+
+            Note:
+
+            - контрольные вопросы
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Управление памятью
+
+            * Владение объектом
+              * `strong`/`weak`/`unsafe_unretained`
+            * Подсчет ссылок
+              * `retain`/`release`
+            * Autorelease pool
+            * Ручное/автоматическое
+
+            Note:
+
+            - Уничтожение объектов = nil
+            - схема владения объектами в иерархии выше
+            - ARC расставляет вызовы retain/release на этапе компиляции по определенным правилам
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Опасности
+
+            * Типы из C не подпадают под RC
+            * Retain cycle или Reference cycle
+            * Memory leak
+            * Dangling pointer
+
+            Note:
+
+            - retain cycle на схеме
+            - как копирование помогает избавиться от retain cycle, о performance копирования
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Обработка ошибок
+
+            * Exception vs NSError
+            * Соглашение о NSError
+        </script></section>
+        <section>
+            <section data-markdown><script type="text/template">
+                ## Домашнее задание №2
+    
+                * Составить ТЗ
+                   * Краткое описание, идея, цель, подробно функциональность
+                   * Набросок UI: экраны и их содержимое, переходы
+                * Создать проект из стандартного шаблона в Xcode. Добавить в storyboard все экраны, переходы и элементы интерфейса, которые вы запланировали.
+
+                Это еще не всё...
+
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Домашнее задание №2
+    
+                * Добавить в проект h+m для всех экранов, моделей, других вспомогательных классов.
+                * Наполнить их кодом насколько вам хватает знаний на данном этапе.
+                * Написать в `README` всё из ТЗ, а также
+                   * Состав команды: имя, фамилия, github-профиль
+                * Создать репозиторий на [github.com/ams22](https://github.com/ams22) и все результаты выложить туда.
+
+                Срок 2 недели, оценка 6 баллов
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Дополнительные баллы
+
+                * Интеграция с [Travis](https://travis-ci.org/)
+            </script></section>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## Следующее занятие
+
+            * 9 марта, 18:30
+            * Objective-C: продолжение
+
+            Note:
+
+            - В конце лекции рекомендуется подытожить прошедшее занятие, повторить при необходимости основные тезисы, сделать краткий анонс на следующее занятие.
+        </script></section>
+        <section data-markdown
+            data-background="images/x-cat.jpg">
+            <script type="text/template">
+            ## Отзывы и оценки
+
+            Спасибо за внимание! <!-- .element: class="dark-background" -->
+
+            Николай Морев <!-- .element: class="dark-background" -->
+
+            n.morev@corp.mail.ru <!-- .element: class="dark-background" -->
+            </script>
+        </section>
+    </div>
+</div>
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.js"></script>
+<script>
+Reveal.initialize({
+    controls: false,
+    progress: true,
+    history: true,
+    center: true,
+    slideNumber: true,
+    transition: 'slide', // none/fade/slide/convex/concave/zoom
+    showNotes: false,
+
+    // Optional reveal.js plugins
+    dependencies: [
+        { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+        { src: 'plugin/markdown/marked.js', condition: function() {
+            return !!document.querySelector( '[data-markdown]' );
+        } },
+        { src: 'plugin/markdown/markdown.js', condition: function() {
+            return !!document.querySelector( '[data-markdown]' );
+        } },
+        { src: 'plugin/highlight/highlight.js', async: true, callback: function() {
+            hljs.initHighlightingOnLoad();
+        } },
+        { src: 'plugin/zoom-js/zoom.js', async: true },
+        { src: 'plugin/notes/notes.js', async: true }
+    ]
+});
+</script>
+</body>
+</html>
