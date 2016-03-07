@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /**
  * White theme for reveal.js. This is the opposite of the 'black' theme.
  *
@@ -361,6 +362,25 @@ body {
 
 .reveal pre, .reveal code {
   font-family: "Ubuntu Mono", monospace; }
+
+.reveal ul.plus-minus {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0; }
+
+.reveal ul.plus-minus li {
+  padding-left: 1em;
+  text-indent: -1em; }
+
+.reveal ul.plus-minus li.plus:before {
+  content: "+";
+  padding-right: 0.5em;
+  color: #d20100; }
+
+.reveal ul.plus-minus li.minus:before {
+  content: "−";
+  padding-right: 0.5em;
+  color: #d20100; }
 
 html.dim .backgrounds {
   -webkit-filter: opacity(0.5);

@@ -2,6 +2,7 @@
 <head>
     <link rel="stylesheet" href="css/reveal.css">
     <link rel="stylesheet" href="css/theme/white.css">
+    <link rel="stylesheet" href="lib/css/xcode.css">
 </head>
 <body>
 <div class="reveal">
@@ -26,67 +27,597 @@
             \* Не влияет на оценку
             </script>
         </section>
-        <section class="dark-background"
-            data-markdown
-            data-background="images/vhs-glitch.jpg">
+        <section data-markdown><script type="text/template">
+            ## На прошлом занятии
+
+            * Основы Objective-C
+        </script></section>
+        <section data-markdown
+            data-background="images/we-need-to-go-deeper.jpg"
+            data-background-size="contain"
+            class="no-logo">
             <script type="text/template">
-            ## Не забудьте отметить свое посещение
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## На этом занятии
+
+            * Продвинутый *Objective-C*
+            * Блоки
+            * Паттерны взаимодействия
+            * KVO и KVC
+            * Управление памятью
+            * Runtime
+            * Взаимодействие с *C*
+            * Отладка
 
             Note:
 
-            * Подробнее об ARC
-            * Блоки, использование совместно с ARC
-            * Внутренняя структура классов
-            * NSNotificationCenter
-            * NSTimer
-            * NSBundle, структура сэндбокса
-            * Messaging
-              * objc_msgSend
-              * Forwarding
-              * Swizzling
-            * Свойства в категории
-            * Отладка
-            * isKindOfClass, respondsToSelector, conformsToProtocol
-            * KVO
-            * KVC
-            * Core Foundation и Toll-free bridging
-            * Передача объектов в качестве указателей в C
+            - Последнее занятие, посвященное чисто языку
+            - На следующем занятии будет контрольная: ARC, основные конструкции
+            - Цель: познакомиться с более сложными темами, которые могут встретиться на практике. Не обязательно все запоминать и использовать, но полезно знать, что такое бывает.
+            - Углубить знания и улучшить понимание того, как работают простые вещи за счет этого
 
-            https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Introduction/Introduction.html
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Материалы
 
-            https://habrahabr.ru/post/177421/
-            http://darkdust.net/writings/objective-c/method-swizzling
-            https://habrahabr.ru/post/270913/
-            https://habrahabr.ru/post/148922/
+            * [Programming with Objective-C](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC)
+            * [objc.io: Communication Patterns](https://www.objc.io/issues/7-foundation/communication-patterns/)
+            * [Key-Value Observing Programming Guide](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueObserving/KeyValueObserving.html)
+            * [Advanced Memory Management Programming Guide](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/MemoryMgmt.html)
+            * [Objective-C Runtime Programming Guide](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/)
+            * [objc.io: Key-Value Coding and Observing](https://www.objc.io/issues/7-foundation/key-value-coding-and-observing/)
+            * ... и материалы на последующих слайдах
 
-            https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/MemoryMgmt.html
+        </script></section>
+        <section class="no-logo" data-markdown><script type="text/template">
+            # Блоки
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Блоки
 
-            https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/ErrorHandlingCocoa/ErrorHandling/ErrorHandling.html
+            * Closure (замыкание), лямбда, анонимная функция
+            * Функция как значение + захваченные переменные
+            * Является объектом в Objective-C
+            * Когда использовать
+              * Асинхронное взаимодействие
+              * Оборачивание куска кода между вызовами
+              * Код, как параметр
 
-            blocks
+            Note:
 
-            conventions
+            - Спецификация как расширение языка C, а не как часть ObjC
+            - Вызов nil блока - крэш
+            - void в пустом списке параметров
+            - __block
+            - Похожесть блоков и объектов
+            - Можно использовать как "задачу" или критическую секцию в параллельном программировании
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Блоки: синтаксис
 
-1.3.4 В начале занятия преподавателю рекомендуется напомнить студентам, какой части курса посвящена текущая лекция, кратко связать ее с предыдущей («На прошлом занятии мы закончили на том-то, а сегодня продолжим рассмотрение этой темы… переходим к следующему большому разделу….»). В конце лекции рекомендуется подытожить прошедшее занятие, повторить при необходимости основные тезисы, сделать краткий анонс на следующее занятие.
-            </script>
+            ```objectivec
+            // Локальная переменная
+            returnType (^blockName)(parameterTypes) = ^returnType(parameters) {...};
+
+            // Свойство
+            @property (nonatomic, copy) returnType (^blockName)(parameterTypes);
+
+            // Параметр метода
+            - (void)someMethodThatTakesABlock:(returnType (^)(parameterTypes))blockName;
+
+            // Аргумент при вызове метода
+            [someObject someMethodThatTakesABlock:^returnType (parameters) {...}];
+
+            // Задание типа
+            typedef returnType (^TypeName)(parameterTypes);
+            TypeName blockName = ^returnType(parameters) {...};
+            ```
+
+            [goshdarnblocksyntax.com](http://goshdarnblocksyntax.com/)
+
+            Note:
+
+            - Повторяет синтаксис указателей на функцию в C
+            - copy - это важно
+            - Используйте typedef, особенно, когда в блок вложен еще блок
+            - typedef помогает проще поменять сигнатуру при необходимости
+            - libextobjc weakify/strongify
+            - Демо + retain cycle
+
+        </script></section>
+        <section>
+            <section>
+                <h2>Плюсы и минусы блоков</h2>
+
+                <ul class="plus-minus">
+                    <li class="plus">Последовательность асинхронных вызовов</li>
+                    <li class="minus"><a href="http://callbackhell.com/">Callback Hell</a></li>
+                    <li class="minus">Сложно отслеживать кто на кого ссылается</li>
+                    <li class="plus">Более декларативные API: <code>map</code>, <code>filter</code>, concurrent enumeration, ...</li>
+                </ul>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Для удобства чтения рекомендуется использовать не более одного блока на метод и всегда располагать его последним параметром</li>
+                    </ul>
+                </aside>
+            </section>
+            <section class="no-logo"
+                data-background="03objc2/callback-hell.png"
+                data-background-size="contain">
+            </section>
+        </section>
+        <section class="no-logo" data-markdown><script type="text/template">
+            # Паттерны взаимодействия
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Взаимодействие
+
+            ![Пример](03objc2/communication-patterns.svg)
+        </script></section>
+        <section>
+            <h2>Связанность (Coupling)</h2>
+
+            <ul class="plus-minus">
+                <li class="minus">Гибкость использования</li>
+                <li class="minus">Переиспользовать класс без другого класса</li>
+                <li class="minus">Изменять поведение</li>
+                <li class="minus">Конфигурировать</li>
+                <li class="minus">Принцип единственной обязанности и разделения ответственности</li>
+            </ul>
+
+            <aside class="notes">
+                <ul>
+                    <li>Tight/Loose</li>
+                </ul>
+            </aside>
+
         </section>
         <section data-markdown><script type="text/template">
-            ## Содержание
+            ## Паттерны взаимодействия
+
+            * Просто вызов метода
+            * Блоки
+            * Target-Action
+            * Делегаты
+            * `NSNotificationCenter`
+            * Key-value Observing
+
+            Note:
+
+            - Для каждого: примеры использования в системных фреймворках, опасности, сторонние библиотеки
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Вызов метода
+
+            * Сильная связанность
+            * Внутри одного компонента одного слоя
+            * Обращение к компонентам, которыми мы владеем или которые используем
+            * Можно ослабить связанность с помощью протокола
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Target-Action
+
+            ```objectivec
+            // ViewController
+            [manager setTarget:self action:@selector(managerDidUpdateNodes)
+                      forEvent:NodesManagerDidUpdateNodes];
+
+            // Manager
+            [self.didUpdateNodesTarget performSelector:self.didUpdateNodesSelector];
+            ```
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Target-Action
+
+            * Часто применяется для визуальных контролов
+            * Responder Chain
+
+            Note:
+
+            - На занятии про storyboard мы создавали target-action
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Делегаты
+
+            ```objectivec
+            // View Controller
+            @interface ViewController () <ManagerDelegate>
+            ...
+            self.manager.delegate = self;
+            ...
+            - (void)managerDidUpdateNodes:(Manager *)manager { ... }
+            // Manager
+            @protocol ManagerDelegate
+            - (void)managerDidUpdateNodes:(Manager *)manager;
+            @end
+            ...
+            @interface Manager : NSObject
+            @property (nonatomic, weak) id<ManagerDelegate> delegate;
+            ...
+            [self.delegate managerDidUpdateNodes:self];
+            ```
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Делегаты
+
+            * Очень часто встречаются в iOS SDK
+            * Кастомизация поведения и оповещения о событиях
+            * Односторонняя связанность
+            * Четко описанный контракт взаимодействия
+            * Проверяется компилятором
+
+            Note:
+
+            - Применяется для близко стоящих компонентов в архитектуре
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Передача блока
+
+            ```objectivec
+            // View Controller
+            self.manager.didUpdateNodesBlock = ^{ ... };
+
+            // Manager
+            @interface Manager : NSObject
+            @property (nonatomic, copy) void (^didUpdateNodesBlock)(void);
+            ...
+            if (self.didUpdateNodesBlock) {
+                self.didUpdateNodesBlock();
+            }
+            ```
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Передача блока
+
+            * Очень похоже на делегаты
+            * Возможность retain-циклов
+            * Лучше подходит для одноразовых колбэков в методах
+            * Для случаев, когда это помогает читабельности кода
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## NSNotificationCenter
+
+            ```objectivec
+            // View Controller
+            [[NSNotificationCenter defaultCenter]
+            addObserver:self
+            selector:@selector(managerDidUpdateNodesNotificationReceived:)
+            name:MGRNodesManagerDidUpdateNodesNotification
+            object:_nodesManager];
+            ...
+            - (void)dealloc {
+                [[NSNotificationCenter defaultCenter] removeObserver:self];
+            }
+            // Manager
+            [[NSNotificationCenter defaultCenter]
+            postNotificationName:MGRNodesManagerDidUpdateNodesNotification
+            object:self];
+
+            ```
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## NSNotificationCenter
+
+            * Самая слабая связанность
+            * Одностороннее взаимодействие: нельзя ответить
+
+            Note:
+
+            - Используется для наиболее удаленных друг от друга компонентов
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Key-value Observing
+
+            ```objectivec
+            // View Controller
+            static void *const NodesManagerDidUpdateNodesObservationContext = &NodesManagerDidUpdateNodesObservationContext;
+            ...
+            [_nodesManager
+            addObserver:self
+            forKeyPath:@"nodes"
+            options:NSKeyValueObservingOptionInitial
+            context:NodesManagerDidUpdateNodesObservationContext];
+            ...
+            - (void)observeValueForKeyPath:(NSString *)keyPath
+            ofObject:(id)object
+            change:(NSDictionary<NSString *,id> *)change
+            context:(void *)context {
+                if (context == NodesManagerDidUpdateNodesObservationContext) { ... }
+            }
+            // Manager
+            self.nodes = ...
+            ```
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Key-value Observing
+
+            * Получатель должен разрегистрироваться до того, как отправитель умрет
+            * Stringly-typed keypath
+            * Опасности многопоточности
+            * Не все классы поддерживают KVO
+            * Лучше использовать сторонние библиотеки
+              * FBKVOController
+              * ReactiveCocoa
+
+            Note:
+
+            - Сторонние библиотеки используют некоторые хаки для того, чтобы сделать это апи более безопасным
+            - libextobjc
+            - KVO вызывается на том потоке, где было изменено значение
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Выбор паттерна
+
+            * Алгоритм выбора из [objc.io: Communication Patterns](https://www.objc.io/issues/7-foundation/communication-patterns/#notifications)
+            * Для продвинутых: [ReactiveCocoa](http://reactivecocoa.io/philosophy.html)
+
+            Note:
+
+            - Дело вкуса, но есть рекомендации
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## `NSTimer`
+
+            * Удерживается run-loop-ом
+            * Удерживает target
+        </script></section>
+        <section class="no-logo" data-markdown><script type="text/template">
+            # Automatic Reference Counting
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Autorelease Pool
+
+            * `autorelease` — отложенный `release`
+            * Помогает расширить время жизни объекта до момента выхода из пула
+            * В каждом треде есть свой стэк пулов
+            * `+showPools`
+
+            Note:
+
+            - Зачем? Чтобы не убивать и не ретейнить объект при возврате его из метода.
+            - По большому счету autorelease в ARC не требуется
+            - оставлен ради обратной совместимости с MRR
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Опасности: демо
+
+            * Retain-цикл
+            * Утечка памяти
+            * Висящий указатель, overreleasing
+            * Случайное использование большого объема памяти
+
+            Note:
+
+            - Довольно сложно придумать пример утечки, не связанный с retain-циклом
+            - раньше достаточно было не сделать release
+            - Иногда утечки встречаются в самом SDK
+
+        </script></section>
+        <section class="no-logo" data-markdown><script type="text/template">
+            # Задача
+
+            Note:
+
+            * Разобрать задачку с прошлых контрольных
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## ARC и исключения
+
+            * По-умолчанию ARC не совместим с исключениями
+            * Можно включить, но будет оверхед и weak-ссылки могут не обнуляться, что приведет к крэшам
+
+            Note:
+
+            - Пример
+            - Некоторые системные API используют внутри исключения не только для крэшей
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Передача объектов в не-RC код
+
+            * C-based API
+            * CoreFoundation и Toll-free Bridging
+              * `__bridge`
+              * `__bridge_retained` или `CFBridgingRetain`
+              * `__bridge_transfer` или `CFBridgingRelease`
+
+            Note:
+
+            - Пример BinarySearchFinder
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Отладка памяти
+
+            * Static Analyzer
+            * Zombie Objects
+            * Address Sanitizer
+            * Instruments: Allocations, Leaks, Zombies
+
+            [Open-Source iOS Apps](https://github.com/dkhamsing/open-source-ios-apps)
+
+        </script></section>
+        <section class="no-logo" data-markdown><script type="text/template">
+            ## Отладка
+
+            * Breakpoints
+            * `po`, `expr`, `thread info`, `frame info`, `bt`
+            * Регистры и стэк
+            * Time Profiler
+
+            [objc.io: Debugging: A Case Study](https://www.objc.io/issues/19-debugging/debugging-case-study/)
+
+            Note:
+
+            - Демо: полезные брейкпоинты
+            - Команды в брейкпоинтах, продолжение выполнения
+            - Повесить брейкпоинт, который будет выводить аргументы какой-нибудь команды
+
+        </script></section>
+        <section class='no-logo' data-markdown><script type="text/template">
+            # Runtime
+
+            Note:
+
+            - Что значит динамический? Откладывает как можно больше решений на время выполнения, а не компиляции.
+            - Для работы приложения необходим не только компилятор, но и программная часть, называемая рантайм. Что-то типа операционной системы для языка.
+            - По большому счету эти знания не требуются для разработки приложений, но их интересно знать.
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## `NSObject` Introspection
+
+            ```objectivec
+            @property (readonly) Class superclass;
+            - (Class)class;
+            - (BOOL)isKindOfClass:(Class)aClass;
+            - (BOOL)isMemberOfClass:(Class)aClass;
+            - (BOOL)conformsToProtocol:(Protocol *)aProtocol;
+            - (BOOL)respondsToSelector:(SEL)aSelector;
+            - (IMP)methodForSelector:(SEL)aSelector;
+            ```
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Структура класса и объекта
+
+            `objc/runtime.h`
+
+            * Класс `struct objc_class`
+              * Указатель на метакласс
+              * Таблица методов: selector → адрес реализации
+            * Объект `struct objc_object`
+              * isa — указатель на класс
+              * ivar-ы
+
+            Note:
+
+            - Демо: смотрим структуру объектов в lldb
+            - структура классов в lldb
+
+        </script></section>
+        <section>
+            <section data-markdown><script type="text/template">
+                ## Messaging
+
+                * Все вызовы конвертируются компилятором в `objc_msgSend`
+                * Имя метода передается в виде строки - селектора
+                * Реализация метода находится динамически
+
+                ```objectivec
+                objc_msgSend(receiver, selector, arg1, arg2, ...)
+                // Можно обращаться из кода
+                (id)self
+                (char *)_cmd
+                ```
+
+                Note:
+
+                - Демо: ставим брейкпоинт на objc_msgSend, проверяем аргументы
+
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Пересылка сообщений
+
+                ```objectivec
+                - (id)forwardingTargetForSelector:(SEL)aSelector;
+                - (void)forwardInvocation:(NSInvocation *)anInvocation;
+                ```
+
+                Note:
+
+                - Демо: форвардинг - позволяет эмулировать множественное наследование
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Динамический метод
+
+                ```objectivec
+                + (BOOL)resolveClassMethod:(SEL)sel;
+                + (BOOL)resolveInstanceMethod:(SEL)sel;
+                ```
+
+                Note:
+
+                - Демо: динамическое добавление метода
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Свойства в категории
+
+                [NSHipster: Associated Objects](http://nshipster.com/associated-objects/)
+
+                ```objectivec
+                void objc_setAssociatedObject(id object, const void *key,
+                            id value, objc_AssociationPolicy policy);
+
+                id objc_getAssociatedObject(id object, const void *key);
+                ```
+
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Method Swizzling
+
+                [NSHipster: Method Swizzling](http://nshipster.com/method-swizzling/)
+
+                ```objectivec
+                BOOL class_addMethod(Class cls, SEL name, IMP imp, const char *types);
+                IMP class_replaceMethod(Class cls, SEL name, IMP imp, const char *types);
+                void method_exchangeImplementations(Method m1, Method m2);
+                ```
+
+                * [JRSwizzle](https://github.com/rentzsch/jrswizzle)
+                * [steipete/Aspects](https://github.com/steipete/Aspects)
+
+            </script></section>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## Key-value Coding
+
+            ```objectivec
+            NSString *name = [object valueForKey:@"name"];
+            [object setValue:@"Alice" forKey:@"name"];
+            ```
+
+            * Key и key path
+            * Автоматический wrapping для простых типов
+            * Агрегирование коллекций: `@avg`, `@count`, `@sum`, `@max`, `@min`
+            * Выбор колонки из коллекций
+            * Получение приватных ivar-ов
+            * И многое другое
+
+            Note:
+
+            - В основном полезно в отладке
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Домашнее задание №2
+
+            * Осталась одна неделя 
+            * 6 баллов
+
+            Note:
+
+            * Сказать, сколько уже сдало
         </script></section>
         <section data-markdown><script type="text/template">
             ## Следующее занятие
 
-            * 2 марта, 18:30
-            * Знакомство с Xcode и Objective-C
+            * 16 марта, 18:30
+            * Model-View-Controller
+            * Рубежный контроль (9 баллов)
         </script></section>
-        <section data-markdown><script type="text/template">
-            ## Домашнее задание №0
-
-            Срок 2 недели, оценка в рамках ДЗ №2
-        </script></section>
-        <section class="dark-background"
+        <section
             data-markdown
-            data-background="images/apple_cat.jpg">
+            data-background="images/zx-loading.jpg">
             <script type="text/template">
             ## Отзывы и оценки
 
