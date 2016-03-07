@@ -154,6 +154,31 @@ $darkBackgroundOutlineColor: rgba(0, 0, 0, 0.1);
     pre, code {
         font-family: "Ubuntu Mono", monospace;
     }
+
+    ul.plus-minus {
+        & {
+            list-style: none;
+            margin-left: 0;
+            padding-left: 0;
+        }
+
+        li {
+            padding-left: 1em;
+            text-indent: -1em;
+        }
+
+        li.plus:before {
+            content: "+";
+            padding-right: 0.5em;
+            color: $technotrackRed;
+        }
+
+        li.minus:before {
+            content: "−";
+            padding-right: 0.5em;
+            color: $technotrackRed;
+        }
+    }
 }
 
 @mixin dimFilter($opacity) {
