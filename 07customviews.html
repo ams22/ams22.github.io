@@ -55,6 +55,328 @@
             - Презентация как обычно доступна на сайте
         </script></section>
         <section data-markdown><script type="text/template">
+            ## Иерархия классов
+
+            ![Иерархия классов UIView](07customviews/uiview-class-hierarchy.png)
+
+            Note:
+
+            - UIResponder – обрабатывает события в рамках responder chain – не только UIView
+            - UIView - от него всегда сабкласимся
+            - UIControl – передает пользовательское действие, а не только что-то отображает
+            - Не все системные контролы с действиями наследуются от UIControl, некоторые используют делегирование
+
+        </script></section>
+        <section>
+            <section data-markdown><script type="text/template">
+                ## Подклассить или нет?
+
+                * Существующие средства кастомизации
+                  * Внешний вид `UIAppearance`
+                  * `UIImageView` вместо ручной отрисовки
+                  * Комбинация нескольких вью
+                  * Ограничены
+
+                Note:
+
+                - Стандартные вью обычно не предполагают подкласс или добавление подвью или широкие возможности для кастомизации
+
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Подклассить или нет?
+
+                * Дизайн по пути наименьшего сопротивления
+                  * Не используйте стандартные вью так, как это не было задумано
+                  * Исходя из HIG
+                  * И возможностей SDK
+                * Не только ради внешнего вида, но и для повторного использования
+
+                Note:
+
+                - Дизайнер нарисовал, а разработчики пытаются следовать с точностью до пикселя, даже если идеология дизайна iOS не соответствует
+                - дизайнер хотел нарисовать стандартные кнопки iOS, а смог найти только шаблоны для старой версии, а внешний вид кнопок с тех пор поменялся
+                - Или дизайнер рисует единый дизайн для iOS и Android, хотя принципы навигации и внешний вид элементов на этих системах различается
+                - Из практики: реюз, инкапсуляция оформления, добавление дополнительной функциональности в стандартные вью (Memento button), рисование фигур
+
+            </script></section>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## Точки кастомизации
+
+            * `initWith(Coder|Frame):`
+              * Композиция подвью и слоев
+              * Добавление gesture recognizer-ов
+            * `drawRect:` – ручная отрисовка содержимого
+            * `layoutSubviews`, `updateConstraints` – адаптация
+            * Методы `UIResponder` – обработка событий
+            * `(will|did)MoveToSuperView:`, `(didAdd|willRemove)Subview:` – реакция на изменения в иерархии
+
+            Note:
+
+            - Главная задача - показывать контент и управлять взаимодействием с этим контентом
+            - Переопределять все методы не обязательно
+            - Вью не должна зависеть от других компонентов приложения. Максимальная возможность переиспользования
+            - Стараться не использовать термины предметной области в названиях свойств и методов
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Публичный интерфейс
+
+            * Свойства, влияющие на содержимое
+              - Не использовать слой модели приложения
+            * Свойства, влияющие на внешний вид (`UIAppearance`)
+            * Паттерны взаимодействия: делегаты, блоки, target-action (`UIControl`)
+            * Иногда проще дать публичный доступ к дочерним вью
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Технологии iOS
+
+            * `UIAppearance`
+            * Dynamic Type
+            * Accessibility (не только для людей с ограниченными возможностям)
+            * Локализация
+
+            Note:
+
+            - Что еще можно поддержать в хорошо спроектированном кастомном вью
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Создание иерархии
+
+            * В коде
+            * В Interface Builder
+            * Смешанный вариант
+
+            Note:
+
+            - У некоторых вью другой designated initializer
+            - Демо
+              - Создание в storyboard
+                - IBOutlet, IBAction
+              - Создание в XIB
+                - Загрузка из XIB
+              - создание в коде
+              - `IBInspectable`, `IBDesignable`
+              - backgroundColor, textColor – тайлинг с помощью UIColor, градиентная заливка
+
+        </script></section>
+        <section>
+            <section data-markdown><script type="text/template">
+                ## Модель отрисовки
+    
+                ![Стэк графических технологий](07customviews/drawing-stack.png)
+    
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Модель отрисовки
+
+                * Методы `drawRect:`, `setNeedsDisplay`
+                * `CGContext`
+                * Рисование с помощью Core Graphics
+
+                Note:
+
+                - Ручная отрисовка медленнее, чем другие способы, т.к. она задействует CPU
+                - Пользуйтесь этим методом только когда другие способы не подходят
+                - Может показаться неочевидным, но даже загрузить готовую картинку из файла будет быстрее, т.к. она сразу отправляется на GPU и не задействует CPU для повторной перерисовки, перемещения, масштабирования и т.д.
+
+            </script></section>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## Модель взаимодействия
+
+            ![Модель взаимодействия](07customviews/runtime-interaction.png)
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Демо
+
+            * `drawRect:`
+            * `IBDesignable`, `IBInspectable`
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## `CALayer`
+
+            * Буфер видеопамяти вью
+            * Core Animation: анимация и комбинирование слоев для рендеринга
+            * То, что нарисовал `drawRect:`, кэшируется в слое
+
+            Note:
+
+            - почему анимации реализованы именно на уровне слоев, а не на уровне вью - потому что на gpu это делается гораздо быстрее
+            - хотя сейчас появились сторонние библиотеки для анимации на cpu, например POP
+            - Все содержимое вью попадает в CALayer в виде отрендеренной картинки. Когда мы что-то рисуем в drawRect, тоже
+            - Слой хранит контент в виде битмапа, т.е. в удобном виде для манипуляций на графическом чипе
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## `CALayer` API
+
+            * Во многом дублирует `UIView`
+            * `delegate` – отрисовка и лэйаут
+            * `contents`
+            * `cornerRadius`, `borderWidth`, `borderColor`, `shadow*`, `mask`
+            * Может поддерживать любую технологию отрисовки
+
+            Note:
+
+            - Слои – это не замена вью, это инфраструктура поверх которой работают вью
+            - Слои не обрабатывают события
+            - Некоторые свойства отличаются по названию, но совпадают по сути или отличаются в некоторых деталях (alpha/opacity, center/position)
+            - contents обычно задается вью
+              - Содержимое слоя - это битмап. Его можно присвоить слою различными способами:
+              - layer.contents - лучше всего, если содержимое редко меняется, можно присвоить изображение
+              - Через делегатные методы по аналогии с drawRect - drawLayer:inContext:
+              - Создать подкласс и реализовать drawInContext:
+
+        </script></section>
+        <section>
+            <section data-markdown><script type="text/template">
+                ## Геометрия `CALayer`
+    
+                ![Координаты CALayer](07customviews/layer-geometry.png)
+    
+                Note:
+    
+                - слой - это 2мерная поверхность в 3х мерном пространстве
+                - zPosition, transform CATransform3D
+    
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## `anchorPoint`
+    
+                ![Якорная точка](07customviews/anchor-point.png)
+    
+            </script></section>
+        </section>
+        <section data-markdown style="text-align: left"><script type="text/template">
+            ## Демо `CAShapeLayer`
+
+            ![Пример Shape Layer](07customviews/shape-layer-demo.png) <!-- .element: style="position: absolute; right: 0; width: 250px; height: auto; z-index: 999" -->
+
+            * Кривые Безье, линии, фигуры
+            * Заливка, толщина, прерывистость
+            * Скругление, частичное закрашивание
+
+            Note:
+
+            - Поддерживает анимации на уровне кривых
+            - Отличный способ заменить простые картинки и drawRect:
+            - Можно копировать код из Illustrator и других граф. программ с помощью спец плагинов
+            - Сложная анимированная сцена из After Effects
+            - http://cocoadocs.org/docsets/MRProgress/0.5.1/
+            - Настройки: скругление концов, возможность закрасить частично на N%
+            - Растеризация происходит на CPU, поэтому при большой сложности или частых обновлениях может тормозить
+
+        </script></section>
+        <section style="text-align: left" data-markdown><script type="text/template">
+            ## Другие слои
+
+            ![Layer Player](07customviews/layer-player.png) <!-- .element: style="position: absolute; right: 0; width: 250px; height: auto; z-index: 999" -->
+
+            * CATiledLayer – приложение Карты
+            * CATextLayer – основа UILabel
+            * CAScrollLayer – основа UIScrollView
+            * CAReplicatorLayer – копирование слоев
+
+            [Список](http://apple.co/1NicxEl)
+
+            App Store: [Layer Player](http://bit.ly/AppStoreLayerPlayer)
+
+            Github: [Layer Player](https://github.com/scotteg/LayerPlayer)
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Обработка тач-событий
+
+            * Responder Chain (сложно и низкоуровнево)
+            * Gesture Recognizers (просто)
+
+            [React.js Conf 2016 - Lightning Talks - Andy Matuschak](https://youtu.be/uBYPqb83C7k)
+
+            Note:
+
+            - Хотя чаще всего достаточно gesture recognizers, полезно знать и принципы работы RC для сложных случаев
+            - Быстрый доклад от автора системы обработки событий в iOS про боль, которую он испытывал до появления GR
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Responder Chain
+
+            ![Responder Chain](07customviews/responder-chain.png)
+
+            Note:
+
+            - Сначала hit-testing от application до view: `hitTest:withEvent`, `pointInside:WithEvent:`
+            - Затем от view, попавшего под hit-test до верха объектам дается возможность обработать событие
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Доставка событий
+
+            ![Доставка событий](07customviews/touch-events.png)
+
+            Note:
+
+            И еще touches cancelled – например при выходе из приложения
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Gesture Recognizer
+
+            ![Диаграмма использования Gesture Recognizer](07customviews/gesture-recognizer-diagram.png)
+
+            Note:
+
+            - Виды: тап, свайп, pan, pinch, rotation, screen edge pan, long press
+            - Можно создавать свои рекогнайзеры
+            - Конфликты
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Состояния recognizer-а
+
+            ![Фазы GR](07customviews/gesture-recognizer-states.png)
+
+            Note:
+
+            - discrete vs continuous
+
+        </script></section>
+        <section class="no-logo" data-markdown><script type="text/template">
+            # Демо
+
+            [Handling Touches Using Responder Methods and Gesture Recognizers](https://developer.apple.com/library/ios/samplecode/Touches/Introduction/Intro.html)
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Отладка тачей
+
+            * `userInteractionEnabled` (выключено по-умолчанию для `UILabel`, `UIImageView`)
+            * Методы `UIApplication` `beginIgnoringInteractionEvents` и `endIgnoringInteractionEvents`
+            * Тач отключается во время анимации по-умолчанию
+            * Где-то в responder chain переопределены методы `hitTest:withEvent:` и `pointInside:withEvent:`
+
+            Note:
+
+            - Почему могут не срабатывать?
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+        </script></section>
+        <section data-markdown><script type="text/template">
+        </script></section>
+        <section data-markdown><script type="text/template">
+        </script></section>
+        <section data-markdown><script type="text/template">
+        </script></section>
+        <section data-markdown><script type="text/template">
+        </script></section>
+        <section data-markdown><script type="text/template">
+        </script></section>
+        <section data-markdown><script type="text/template">
         </script></section>
         <section data-markdown><script type="text/template">
         </script></section>
