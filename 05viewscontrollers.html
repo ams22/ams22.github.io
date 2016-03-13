@@ -42,21 +42,314 @@
         <section data-markdown><script type="text/template">
             ## На этом занятии
 
+            * Жизненный цикл приложения
+            * Подробнее о `UIView`
+            * Подробнее о `UIViewController`
+
             Note:
 
             - Сразу завести будильник на перерывы
+            - Что продемонстрировать?
+
+            Углубляем тему, начатую на предыдущем занятии
 
         </script></section>
         <section data-markdown><script type="text/template">
             ## Материалы
 
+            * [App Programming Guide for iOS](https://developer.apple.com/library/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Introduction/Introduction.html)
+            * [View Programming Guide for iOS](https://developer.apple.com/library/ios/documentation/WindowsViews/Conceptual/ViewPG_iPhoneOS/Introduction/Introduction.html)
+            * [View Controller Programming Guide for iOS](https://developer.apple.com/library/ios/featuredarticles/ViewControllerPGforiPhoneOS/)
+            * WWDC'12: [The Evolution of View Controllers on iOS](https://developer.apple.com/videos/play/wwdc2012/236/)
+            * Хабр: [Жизненный цикл UIViewController'a](https://habrahabr.ru/post/129557/)
+
             Note:
 
             - Презентация как обычно доступна на сайте
+            
         </script></section>
         <section data-markdown><script type="text/template">
+            ## Состояния приложения
+
+            ![Диаграмма состояний приложения](05viewscontrollers/app-states.png) <!-- .element: style="height: 70%" -->
+
+            Note:
+
+            - Неактивно: выполняется, но не получает событий, например при вытащенной шторке, в менеджере приложений, при показе системного алерта
+            - В фоне: приложение свернуто, но выполняется. Для обычных приложений это небольшой промежуток времени после сворачивания. Его можно продлить.
+            - Приостановлено: в памяти, но не выполняется. События накапливаются в очереди (пользовательские настройки, смена локали, заряд батареи и т.д.).
+            - Приложение может быть закрыто в любой момент - желательно сохранять состояние приложения
+
         </script></section>
         <section data-markdown><script type="text/template">
+            ## Зачем их отслеживать?
+
+            * Запуск: инициализация моделей, подготовка к показу UI
+            * Inactive: скриншот для менеджера задач и для запуска
+            * Сохранение важных данных
+            * Освобождение памяти, чтобы сократить вероятность выгрузки из памяти
+
+        </script></section>
+        <section class="no-logo" data-markdown><script type="text/template">
+            # `UIView`
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## `UIView`
+
+            * Выделенная область экрана
+              * Отрисовка
+              * Получение событий
+            * Управление дочерними вью
+              * Создание и удаление
+              * Скрытие и показ
+              * Размеры и позиции
+              * Задание параметров
+            * Анимация
+
+            Note:
+
+            - Примеры вью: картинка, текст, геометрическая фигура или комбинация всего этого
+            - Не только для показа собственного содержимого, но и просто группировака других вью
+            - Иногда в качестве вспомогательного элемента, для упрощения логики лэйаута
+            - У каждого приложения есть хотя бы одно окно и одно вью
+            - Можно и нужно создавать собственные вью
+            - Стандартные вью имеют ограниченные возможности кастомизации,
+            - не предполагают создание подклассов или добавление дочерних вью
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## `UIWindow`
+
+            * Занимает все пространство экрана
+            * Не имеет собственного содержимого, только подвью
+            * Корневой контейнер для всех вью на экране
+            * Доставляет события к вью и контроллерам
+            * `window.rootViewController`
+
+            Note:
+
+            - У большинства приложений только одно окно
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Отрисовка UIView
+
+            * CoreGraphics
+            * OpenGLES
+            * Metal
+
+            ![CoreGraphics](05viewscontrollers/coregraphics-icon.png) <!-- .element: style="height: 100px" -->
+            ![OpenGLES](05viewscontrollers/opengles-icon.png) <!-- .element: style="height: 100px" -->
+            ![Metal](05viewscontrollers/metal-icon.png) <!-- .element: style="height: 100px" -->
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Иерархия `CALayer`-ов
+
+            ![Иерархия слоев](05viewscontrollers/layers-hierarchy.jpg)
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Отрисовка UIView
+
+            * С каждым вью ассоциирован хотя бы один `CALayer`
+            * Дерево `UIView` и дерево `CALayer` — параллельные иерархии
+            * `drawRect:` и `setNeedsDisplay`
+            * Для большинства задач достаточно API `UIView`
+
+            Note:
+
+            - CALayer - это API для работы с буфером видеопамяти, т.е. непосредственно содержимое вью
+            - CA - это Core Animation
+            - Кэширование битмапа, отрисовка только по необходимости
+            - Изменение модели - вызов setNeedsDisplay, отрисовка один раз в конце цикла отрисовки
+            - К лэйеру приходится обращаться напрямую нечасто, например скругление углов, обводка
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Точки и пиксели
+
+            ![Разрешения экрана](05viewscontrollers/points-and-pixels.png)
+
+            [iOS Resolution Quick Reference](http://iosres.com/)
+
+            [iPhone 6 Screens Demystified](http://www.paintcodeapp.com/news/iphone-6-screens-demystified)
+
+            Note:
+
+            - Раньше все было просто - одно разрешение, все ресурсы и весь UI pixel-perfect и жестко привязан к размерам экрана
+            - Потом появился iPad и стало два набора ресурсов, потом появилась Retina и стало 4 набора ресурсов
+            - Потом разные разрешения и 3x и пошло-поехало
+            - На 6+ есть три понятия: логическое разрешение, разрешение рендеринга, физическое разрешение
+
+        </script></section>
+        <section data-markdown style="text-align: left"><script type="text/template">
+            ## Система координат
+
+            ![Система координат](05viewscontrollers/coordinates.jpg) <!-- .element: style="position: absolute; right: 0; z-index: 999" -->
+
+            * Тип координат — `CGFloat`
+            * Каждое вью имеет собственную систему координат и точку отсчета <!-- .element: style="padding-right: 25%" -->
+            * Преобразование
+
+            ```objectivec
+            CGPoint pointInsideChild = CGPointMake(30, 40);
+            CGPoint pointInsideParent =
+                [parentViewconvertPoint:pointInsideChild 
+                               fromView:childView];
+            ```
+
+            Note:
+
+            - В некоторых API точка отсчета и направление может быть другим
+            - В некоторых API координаты задаются на точками, а на интервале от 0 до 1
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Свойства `UIView`
+
+            * `frame`, `center`, `bounds`
+            * `transform`
+            * `hidden`, `alpha`
+            * `backgroundColor`
+            * `tintColor`
+
+            Note:
+
+            - Матрица scale, rotate, transform - как меняются внутренние координаты, как внешние?
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## На следующих лекциях
+
+            * Layout: Позиционирование и адаптация
+            * Графика и анимация
+            * Создание кастомных вью
+
+        </script></section>
+        <section class="no-logo" data-markdown><script type="text/template">
+            # `UIViewController`
+
+            Предоставляет инфраструктуру для управления представлениями приложения
+
+            Note:
+
+            - Нужно различать вью контроллер и просто контроллер
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Функциональность
+
+            * Управление иерархией вью: загрузка, показ, адаптация
+            * Обработка пользовательских действий
+              * Показать анимацию, обновить модель, изменить представления, показать другой экран
+            * Прослойка между представлением и моделью
+            * Управление другими ресурсами, связанными с ответственностью данного контроллера
+            * Взаимодействие с другими контроллерами
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Создание
+
+            * Иерархия вью: код / XIB / Storyboard
+            * Подкласс `UIViewController`
+            * Outlets, Actions
+            * Вью загружается при первом обращении к свойству `view`
+            * Настройка вью
+            * Настройка контроллера
+
+            Note:
+
+            - title, status bar, ...
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Показ контроллеров
+
+            ```objectivec
+            // Root View Controller
+            UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
+            window.rootViewController = viewController;
+
+            // Внутри контейнера, например UINavigationController
+            [self.navigationController pushViewController:viewController animated:YES];
+
+            // В поповере
+            ...
+
+            // Модально
+            [self presentViewController:viewController animated:YES completion:^{
+                NSLog(@"presented");
+            }];
+            ```
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Жизненный цикл
+
+            1. `init*`/`dealloc`
+            2. `awakeFromNib`
+            3. `loadView`
+            4. `viewDidLoad`
+            5. `view(Will|Did)(Appear|Disappear)`
+            6. `didReceiveMemoryWarning`
+            7. `view(Will|Did)LayoutSubviews`, `viewWillTransitionToSize:withTransitionCoordinator:`
+
+            Note:
+
+            - Создание/освобождение ресурсов и объектов, не зависящих от вью
+            - Высвобождение тяжелых картинок
+            - Отписка - только один раз!
+            - Конфигурация объектов из XIB
+            - Конфигурация view, локализация
+            - willAppear: запуск таймера, обновление данных из модели, подписка на события, которые актуальны только при отображении вью
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Состояния
+
+            ![Диаграмма состояний контроллера](05viewscontrollers/controller-states.png) <!-- .element: style="height: 70%" -->
+
+            Note:
+
+            - Неожиданные переходы
+            - Колбэки могут быть вызваны несколько раз - это надо учитывать при подписках
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Взаимодействие
+
+            * Control flow: Source и Destination, Master и Detail, показывающий и показываемый
+            * Протокол взаимодействия задает показываемый: публичный интерфейс + делегатные методы
+            * Для контроллеров одного уровня — общий объект-контекст или общая модель
+            * Скрытие и удаление делает тот, кто показал и создал
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Best Practices
+
+            * Односторонняя связность: от использующего к используемому
+            * Взаимодействие: публичный интерфейс + делегатные методы
+            * Иерархия вью — деталь реализации и должна быть скрыта
+            * Не возлагать на контроллер функции модели
+            * Хранить данные только для кэширования
+            * Адаптивность
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Для самостоятельного изучения
+
+            * Собственный контроллер-контейнер
+            * Анимированные и интерактивные переходы
+            * Сохранение состояния приложения после перезапуска
+
+            Note:
+
+            - Как использовать page view controller, popover, popover presentation
+            - Как сделать полупрозрачный модальный контроллер
+            - Как контроллеры адаптируются к size class
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Run Loop
         </script></section>
         <section data-markdown><script type="text/template">
             ## Домашнее задание №0
@@ -94,7 +387,7 @@ Reveal.initialize({
     center: true,
     slideNumber: true,
     transition: 'slide', // none/fade/slide/convex/concave/zoom
-    showNotes: false,
+    showNotes: true,
 
     // Optional reveal.js plugins
     dependencies: [
