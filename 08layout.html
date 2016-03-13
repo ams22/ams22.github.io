@@ -42,6 +42,13 @@
         <section data-markdown><script type="text/template">
             ## На этом занятии
 
+            * Устройство лэйаута в iOS
+            * Ручной лэйаут
+            * Модель Springs and Struts
+            * Autolayout
+            * Stack View
+            * Адаптивность
+
             Note:
 
             - Сразу завести будильник на перерывы
@@ -50,13 +57,341 @@
         <section data-markdown><script type="text/template">
             ## Материалы
 
+            * [View Programming Guide for iOS](https://developer.apple.com/library/ios/documentation/WindowsViews/Conceptual/ViewPG_iPhoneOS/Introduction/Introduction.html)
+            * [Auto Layout Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/)
+            * [Auto Layout Help](https://developer.apple.com/library/ios/recipes/xcode_help-IB_auto_layout/chapters/UnderstandingAutolayout.html)
+            * [Adaptivity and Size Changes](https://developer.apple.com/library/prerelease/ios/featuredarticles/ViewControllerPGforiPhoneOS/TheAdaptiveModel.html)
+
             Note:
 
             - Презентация как обычно доступна на сайте
         </script></section>
-        <section data-markdown><script type="text/template">
+        <section class="no-logo" data-markdown><script type="text/template">
+            # Layout
+
+            Layout (лэйаут) – схема, план, расположение, размещение, компоновка, структура. <!-- .element: style="text-align: left" -->
+
+            Способ, которым части чего-либо упорядочены или расположены. <!-- .element: style="text-align: left" -->
+
+            slovari.yandex.ru, oxforddictionaries.com <!-- .element: style="text-align: right" -->
+
         </script></section>
         <section data-markdown><script type="text/template">
+            ## frame bounds center
+
+            ![Frame, bounds, center](08layout/frame.png)
+
+            Note:
+
+            - Сдвиг bounds.origin - сдвигает точку отсчета системы координат, при этом собственное содержимое (фон) не сдвигается, а дочерние view сдвигаются (в каком направлении?)
+            - Увеличение bounds.size - относительно центра
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Transform: демо
+
+            ![Демо скриншот](08layout/frame-demo.png)
+
+            Note:
+
+            - Строго говоря не относится к лэйауту, но является еще одной возможностью позиционирования вью.
+            - Обычно transform применяют кратковременно для анимаций
+            - Выполняется относительно center
+            - Связь frame и transform
+            - Если повернуть экран, то система применит новый фрейм и трансформ сползет
+            - Другой вариант задания преобразования - через drawRect. Отличие в том, что там трансформ применится к координатной сетке, на которой идет рисование, а не к frame, bounds и т.д., т.е. не к самому view. 
+            - Удобство transform context в drawRect в том, что можно писать код отрисовки фигур относительно нулевой точки, а затем располагать их как требуется с помощью трансформов.
+            - Если вы хотите задать постоянный transform не с помощью drawRect, а с помощью свойства transform, лучше это реализовать внутри кастомного вью (чтобы скрыть детали от внешнего кода) и обязательно предусмотреть каким образом transform будет обновляться во время лэйаута, т.е. при задании frame. Т.о. для внешнего кода это будет выглядеть как обычный вью, и ему не надо будет думать о frame и т.д.
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Основные особенности лэйаута UIView
+
+            * layoutSubviews, setNeedsLayout, layoutIfNeeded
+            * sizeToFit, sizeThatFits:
+
+            ![Срабатывание setNeedsLayout](08layout/needs-layout.png)
+
+            http://blog.logichigh.com/2011/03/16/when-does-layoutsubviews-get-called/ 
+
+            Note:
+
+            - Здесь можно не только задавать позиции, но и например прятать или показывать дочерние вью, делать setNeedsDisplay при необходимости и все, что как-то связано с позиционированием.
+            - Методы layoutSubviews вызываются последовательно по иерархии view, начиная с самого верхнего вью, которому требуется лэйаут.
+            - Родитель задает фрейм дочерних вью, bounds используется в качестве точки отсчета
+            - Все рассмотренные механизмы лэйаута работают поверх этой схемы.
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Лэйаут в UIViewController: демо
+
+            ![Демо: прямоугольник](08layout/controller-layout-demo.png)
+
+            Note:
+
+            - Контроллер ответственен в том числе за лэйаут своих вью
+            - Чаще всего корневой вью у контроллера - это объект базового класса UIView, а не нашего собственного подкласса, поэтому мы не можем переопределить его layoutSubviews. Вместо этого контроллер сам управляет этим процессом.
+            - У UIViewController тоже есть собственный метод для код связанного с лэйаутом: viewWillLayoutSubviews и viewDidLayoutSubviews.
+            - Код, который мы пишем в layoutSubviews в процессе поворота автоматически анимируется.
+            - Кроме того, можно реагировать на смену размера (делать свои кастомные анимации), на смену size class.
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Модель Springs and Struts
+
+            * A.k.a. Autoresizing
+            * Свойства autoresizesSubviews, autoresizingMask
+            * Правила: пружины и распорки
+            * Задание в IB и в коде
+            * Демо
+
+            Note:
+
+            - UIView autoresizesSubviews - включает или выключает авторесайзинг
+            - autoresizingMask - задает правила ресайзинга
+            - Правила - к отступам от каждого края вью до родительского вью, а также к ширине и высоте задается правило - является этот размер фиксированным (strut, распорка, опора, подпорка) или растягиваемым (spring, пружина). Фиксированные размеры всегда остаются постоянными, а растягиваемые сжимаются или растягиваются таким образом, чтобы все пружины растянулись или сжались одинаково.
+            - Правила можно задать в IB - там визуально показывается, как именно будет изменяться размер и положение вью, либо в коде с помощью флагов.
+            - Эти правила применяются до вызова layoutSubviews
+            - Возможности autoresizing довольно ограничены
+            - Пример "зеленый прямоугольник"
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Autolayout
+
+            * Alignment rectangle vs frame rectangle
+            * Декларативные правила
+            * Внутренние изменения во вью могут повлиять на внешние вью
+
+            Note:
+
+            - Суть в том, что координаты не назначаются непосредственно. Вместо этого задаются различные правила (более богатые по сравнению с autoresizing), которые говорят как позиция и размеры различных вью связаны между собой.
+            - autolayout может срабатывать не только по стандартной схеме - при изменении размеров вью, но и при внутренних изменениях во вью - изменение содержимого UILabel или UIImageView, изменение размера шрифта и т.д.
+
+        </script></section>
+        <section class="no-logo" data-markdown><script type="text/template">
+            # Constraint
+
+            Constraint (констрейнт) – ограничивающее условие, ограничение <!-- .element: style="text-align: left" -->
+
+            slovari.yandex.ru <!-- .element: style="text-align: right" -->
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Структура констрейнта
+
+            ![Структура констрейнта](08layout/constraint.png)
+
+            Note:
+
+            - Правила состоят из
+              - тип
+              - 1 или 2 вью
+              - отношение
+              - константа
+              - множитель
+              - приоритет - влияет на то, какой констрейн можно выкинуть, если возникает противоречивость, либо уточняет значение при использовании неравенств, которые неоднозначно описывают результат
+            - Почему отступы называются leading и trailing, а не left и right - потому что поддержка языков с письмом справа налево.
+            - Все правила вместе представляют собой систему линейных уравнений и неравенств, где в качестве переменных выступают координаты всех вью
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Атрибуты
+
+            ![Атрибуты констрейнта](08layout/constraint-attributes.png)
+
+            Note:
+
+             - отступы краев от родительского вью и между братскими вью
+                - центрирование относительно родителя или братьев
+                - размер фиксированный или относительный
+                - соотношение сторон вью
+            - Не все атрибуты можно комбинировать друг с другом
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Различные способы задания констрейнтов
+
+            ![Способы задания констрейнтов](08layout/constraint-variants.png)
+
+            Note:
+
+            - Чтобы уравнение имело однозначное решение обычно необходимо и достаточно задать на каждый вью по два констрейнта на каждую ось (исключение – внутри scroll view)
+            - Есть возможность расставить констрейны автоматически, но лучше этим не пользоваться, т.к.
+                - система не может понять, какая у вас конечная цель и делает лишь некоторое приближение.
+                - потом сложно разобраться во всем этом
+                - не появляется понимания как работать с констрейнами
+            - Почему автоматическое задание констрейнов не всегда работает так, как мы хотим.
+            - Показаны три варианта – все разные, но вью отображается во всех на одном и том же месте, различается только поведение при растягивании
+            - Второй и третий одинаковы по результату, но различаются по способу задания. У способов нет явных преимуществ – и там и там необходимо два констрейна
+            - Преимущество может заключаться в том, как констрейны себя ведут при удалении одного из вью: если два вью связаны, то соответствующие констрейны не будут активны, а если констрейны заданы независимо, то лэйаут продолжит работать при удалении одного из вью
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Задание констрейнтов: демо
+
+            * В Interface Builder
+            * С помощью NSLayoutConstraint
+            * С помощью Visual Formatting Language
+            * С помощью NSLayoutAnchor
+
+            Note:
+
+            - если вы создали вью в IB и не добавили ни одного констрейна - система автоматически добавляет так называемые прототипы констрейнов - они невидимы. Как только вы добавляете первый констрейн, то прототипы удаляются и появляются ошибки.
+            - Превью
+            - Констрейны можно с помощью outlet-ов вытаскивать в свойства своих классов и работать с ними из кода
+            - layout guides - чтобы контент не заходил под полупрозрачные бары
+            - layout margins - рекомендуемые системой отступы для контента от краев экрана (могут меняться в зависимости от среды)
+            - readableContentGuide - ограничение ширины тексты для удобства чтения
+            - На время анимации рекомендуется временно удалить констрейны
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## intrinsicContentSize
+
+            ![Intrinsic Content Size](08layout/intrinsic-size.png)
+
+            ```objectivec
+            // Compression Resistance Priority – содержимое не хочет увеличиваться
+            View.height >= IntrinsicHeight
+            View.width >= IntrinsicWidth
+
+            // Content Hugging Priority – содержимое не хочет уменьшаться
+            View.height <= IntrinsicHeight
+            View.width <= IntrinsicWidth
+            ```
+
+            Note:
+
+            - intrinsicContentSize - естественный размер view основанный на его содержимом. У некоторых стандартных вью он есть по-умолчанию. При необходимости его можно добавить в свой кастомный вью.
+            - intrinsicContentSize участвует в неявных констрейнах выраженных неравенствами, а
+            - content hugging и compression resistance влияют на приоритет этих констрейнов
+            - Hugging => content does not want to grow
+            - Compression Resistance => content does not want to shrink
+            - по-умолчанию вью легче растянуть, чем сжать
+            - Демо
+            - примеры: когда несколько вью с instrinsicContentSize надо равномерно расположить в одном измерении, то непонятно какие из них можно сжимать, а какие нет
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Ошибки autolayout
+
+            * В Interface Builder
+              * Система противоречива
+              * Система неоднозначна
+              * Положение вью не совпадает с расчетным
+            * В рантайме
+              * Автоматически добавляемые констрейнты
+              * Ошибки, вызванные слишком большим или слишком маленьким вью
+              * Приоритеты для менее важных констрейнтов
+              * Брейкпоинт на UIViewAlertForUnsatisfiableConstraints
+              * Xcode Debug View Hierarchy
+
+            Note:
+
+            - Если система противоречива и не имеет решений, то в IB появится красная ошибка
+            - Часто это бывает при добавлении новых вью, созданных в коде, когда забывают сделать translatesAutoresizingMaskIntoConstraints = NO
+            - Если система неоднозначна и имеет больше одного решения, то в IB появится красная ошибка
+            - Необходимо добавить дополнительные констрейны или расставить приоритеты между опциональными констрейнами
+            - В рантайме можно использовать метод hasAmbiguousLayout для проверки, exerciseAmbiguityInLayout для просмотра возможных вариантов разрешения ошибки, `_autolayoutTrace` для подробной информации о настройках autolayout связанных с иерархией вью.
+            - Если решения не совпадают с текущим положением в IB, то появится желтое предупреждение
+            - Чтобы не было ошибок, надо чтобы констрейны точно задавали и размер и положение всех вью
+            - Обычно самое сложное - это понять что именно пошло не так, после этого исправить проблему очень легко: добавить или удалить констрейны, задать приоритеты
+            - Еще ошибки могут возникать в рантайме, например, когда при определенной ширине вью констрейны оказываются противоречивыми. Может написать в лог, а может крэшнуться. Рекомендуется не игнорировать то, что пишется в лог, даже если кажется, что это ни на что не влияет.
+            - Если система сама может путем выбрасывания некоторых констрейнов сделать непротиворечивый лэйаут, она это делает.
+            - брейкпоинт на UIViewAlertForUnsatisfiableConstraints
+            - Кроме того констрейны можно визуализировать с помощью Xcode Debug View Hierarchy
+            - Если вы работаете с autolayout, никогда не задавайте center, frame, bounds вручную
+            - В IB назначайте своим вью имена, чтобы было проще ориентироваться в правилах autolayout
+            - Констрейнам тоже можно назначить имена с помощью свойства identifier, чтобы их было проще идентифицировать отлаживаясь в рантайме.
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+
+            Stack views предоставляют простой способ использовать мощь autolayout без сложности констрейнтов
+
+            Auto Layout Guide
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## UIStackView: демо
+
+            ![UIStackView демо](08layout/stack-view.png)
+
+            Note:
+
+            - стэк - это набор элементов расположенных один за другим по горизонтали или по вертикали
+            - Модель похожа на Android или HTML
+            - Намного проще, чем autolayout, но при этом подходит для определенного круга задач очень хорошо
+            - Свойства: направление, выравнивание, промежутки, тип распределения
+            - Внутри используется autolayout
+            - Можно вкладывать один стэк в другой
+            - В документации рекомендуется обращаться к использованию стэк вью сначала, а потом уже, если не хватает возможностей, обращаться к ручному добавлению констрейнов
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Size Classes
+
+            ![Size Classes](08layout/size-classes.png)
+
+            * Traits
+            * Regular vs Compact
+            * Поддержка в IB
+            * Поддержка в коде
+
+            Note:
+            - traits (черты) описывают свойства среды, в которой вью и контроллеры оперируют
+            - трэйты бывают: displayScale, UI idiom, наличие force touch
+            - horizontal size class и vertical size class грубо описывают размеры элементов
+            - regular vs compact и их комбинации для horizontal/vertical, и еще есть any
+            - как regular и compact мапятся на различные модели устройств
+            - вы можете переопределить traits для своих дочерних view или view controller-ов
+            - раньше до трэйтов было просто разделение по типу устройств - айфон и айпэд, были отдельные xib-ы и storyboard-ы для разных типов устройств. В iOS 8 это решили устранить это дублирование, а чтобы управлять различиями в показе добавили возможность привязывать констрейны и картинки к определенным size-class-ам, а также реагировать на смену size class в коде.
+            - теперь вместо ориентации - сочетание size class и size
+            - не следует полагаться на то, что определенный size class соответствует какому-либо размеру
+            - не стоит привязывать к idiom при принятии решения о построении интерфейса
+            - Через IB вы можете привязать к size class определенные констрейны, вью или атрибуты вью
+            - превью в IB: выбор size class, preview на различных устройствах
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Ориентация интерфейса: deprecated
+
+            interfaceOrientation (iOS 8.0)  Property
+            - willRotateToInterfaceOrientation:duration: (iOS 8.0)
+            - willAnimateRotationToInterfaceOrientation:duration: (iOS 8.0)
+            - didRotateFromInterfaceOrientation: (iOS 8.0)
+            - shouldAutorotateToInterfaceOrientation: (iOS 6.0)
+            - willAnimateFirstHalfOfRotationToInterfaceOrientation:duration: (iOS 5.0)
+            - didAnimateFirstHalfOfRotationToInterfaceOrientation: (iOS 5.0)
+            - willAnimateSecondHalfOfRotationFromInterfaceOrientation:duration: (iOS 5.0)
+
+            Осталось только свойство UIApplication statusBarOrientation
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Реакция на вращение экрана
+
+            ```objectivec
+            - shouldAutorotate
+            - supportedInterfaceOrientations
+            - preferredInterfaceOrientationForPresentation
+            + attemptRotationToDeviceOrientation
+            - viewWillTransitionToSize:withTransitionCoordinator:
+            - willTransitionToTraitCollection:withTransitionCoordinator:
+            ```
+
+            Мультитаскинг на iPad Air 2 – то же самое
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Адаптивность
+
+            * Не привязывайтесь к ориентации экрана – используйте размеры view
+            * Не привязывайтесь к размерам UIScreen – используйте UIWindow
+            * Помните о том, что статус бар может стать большим
+            * Используйте autolayout, size classes
+
         </script></section>
         <section data-markdown><script type="text/template">
             ## Домашнее задание №0
