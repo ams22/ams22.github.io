@@ -2,6 +2,7 @@
 <head>
     <link rel="stylesheet" href="css/reveal.css">
     <link rel="stylesheet" href="css/theme/white.css">
+    <link rel="stylesheet" href="lib/css/xcode.css">
 </head>
 <body>
 <div class="reveal">
@@ -26,32 +27,279 @@
             \* Не влияет на оценку
             </script>
         </section>
-        <section class="dark-background"
-            data-markdown
-            data-background="images/vhs-glitch.jpg">
-            <script type="text/template">
-            ## Не забудьте отметить свое посещение
+        <section data-markdown><script type="text/template">
+            ## На прошлом занятии
+
+            * Блоки
+            * Паттерны взаимодействия
+            * ARC
+            * KVO
+            * Отладка
 
             Note:
 
-            * NSBundle, структура сэндбокса
+            - Возникли ли какие-нибудь вопросы по этим темам?
 
-1.3.4 В начале занятия преподавателю рекомендуется напомнить студентам, какой части курса посвящена текущая лекция, кратко связать ее с предыдущей («На прошлом занятии мы закончили на том-то, а сегодня продолжим рассмотрение этой темы… переходим к следующему большому разделу….»). В конце лекции рекомендуется подытожить прошедшее занятие, повторить при необходимости основные тезисы, сделать краткий анонс на следующее занятие.
-            </script>
-        </section>
+        </script></section>
         <section data-markdown><script type="text/template">
-            ## Содержание
+            ## На этом занятии
+
+            * Из чего состоит приложение
+              * Слой системных фреймворков
+              * Ваш код: представления и контроллеры
+            * Разбор ДЗ №2
+            * **Контроль**
+
+            Note:
+
+            - Спасибо за очень подробные отзывы!
+            - По отзывам: нужно не только показывать и объяснять, но и давать вам что-то делать, поэтому разберем ДЗ №2
+            - Сразу завести будильник на перерывы и РК
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Материалы
+
+            * Wikipedia: [Model-View-Controller](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller)
+            * WWDC'14: [Core iOS Application Architectural Patterns](https://developer.apple.com/videos/play/wwdc2014/224/)
+            * WWDC'10: [Model-View-Controller for iPhone OS](https://developer.apple.com/videos/play/wwdc2010/116/)
+            * [App Programming Guide for iOS](https://developer.apple.com/library/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide)
+
+            Note:
+
+            - Презентация как обычно доступна на сайте
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## API iOS SDK
+
+            ![Слои iOS](04mvc/ios-layers.png)
+
+            [iOS Technology Overview](https://developer.apple.com/library/ios/documentation/Miscellaneous/Conceptual/iPhoneOSTechOverview)
+
+            Note:
+
+            - SDK - это набор библиотек (aka фреймворков), необходимых для разработки приложений
+            - Все возможные API, которые предоставляет SDK можно условно поделить по уровню абстракции от низких к высоким
+            - Так же как ОС - это прослойка между приложением и железом, высокоуровневые application-level API - это прослойка между вашим кодом и ОС
+            - Cocoa Touch - главные фреймворки для создания приложений: внешний вид, базовая инфраструктура, ключевые технологии (многозадачность, тач, пуши) и другие высокоуровневые системные сервисы. Кандидат №1 для изучения.
+            - Media - кастомная графика, анимация, обработка изображений, аудио, видео, OpenGL, Metal, кастомная отрисовка текста и т.д.
+            - Core Services - Foundation и Core Foundation, location, iCloud, networking и т.д.
+            - Core OS - быстрые вычисления, внешние устройства, security, low-level UNIX APIs
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Запуск приложения
+
+            ```objectivec
+            #import <UIKit/UIKit.h>
+            #import "AppDelegate.h"
+
+            int main(int argc, char * argv[]) {
+                @autoreleasepool {
+                    return UIApplicationMain(argc, argv, nil,
+                        NSStringFromClass([AppDelegate class]));
+                }
+            }
+            ```
+
+            Note:
+
+            - Идея о приложении, как о наборе колбэков
+            - Создает основные инфраструктурные объекты, загружает UI из storyboard, вызывает колбэки app delegate, отображает root view controller.
+            - Как обрабатываются события
+
+        </script></section>
+        <section data-markdown class="scrollable"><script type="text/template">
+            ## Запуск приложения
+
+            ![Последовательность запуска](04mvc/launch-sequence.png)
+
+            Note:
+
+            - launchOptions
+            - Инициализация основных моделей
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Структура приложения
+
+            ![Структура приложения](04mvc/app-objects.png) <!-- .element: style="height: 70%" -->
+
+            Note:
+
+            - UIApplication - цикл событий, ЖЦ приложения, пуши и т.д.
+            - Модель - различные сервисы, менеджеры, бизнес-логика
+            - Цикл - события от пользователя, перерисовка view, главный поток
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Model-View-Controller
+
+            ![MVC](04mvc/mvc-diagram.png)
+
+            Модель-представление-контроллер [представления]
+
+            Note:
+
+            - Основной архитектурный паттерн в iOS
+            - Где еще используется: практически везде для UI, в большинстве веб-фреймворков (RoR, Django, ASP.NET)
+            - В википедии говорится, что история его возникновения и популяризации связана с Smalltalk и Apple WebObjects
+            - Существует много вариаций MVC, но основная идея в разделении объектов по слоям и определении правил взаимодействия
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Model-View-Controller
+
+            * Модель и представление полностью независимы друг от друга
+            * Одни и те же данные можно показывать в другом представлении
+            * Одни и те же представления можно задействовать для любых данных
+            * Связность: только контроллер знает обо всех
+
+            Note:
+
+            - В идеале разделение между вью и моделью - не только на уровне кода, но и по смыслу
+            - Больше возможностей переиспользования кода, проще вносить изменения и добавлять новые функции, вся логика работы SDK построена на отнесении ваших объектов к тому или иному слою
+            - Риск «ожирения» контроллера
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Иерархия представлений
+
+            ![Иерархия UIView](04mvc/view-hierarchy.png)
+
+            Note:
+
+            - Иерархию можно увидеть в работающем приложении двумя способами
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Иерархия представлений
+
+            * Древовидная структура вложенности
+            * Наложение подвью внутри вью в порядке добавления
+            * Родительский вью управляет дочерними
+            * Эффекты родительского вью влияют на дочерние
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Стандартные вью
+
+            [UIKit Catalog (iOS): Creating and Customizing UIKit Controls](https://developer.apple.com/library/ios/samplecode/UICatalog)
+
+            ![UI Catalog](04mvc/ui-catalog.png)
+
+            Note:
+
+            - Рекомендации по использованию - в iOS HIG
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## View Controller
+
+            * Отвечает за один экран приложения
+            * Отвечает за подиерархию вью
+            * Обычно любое вью относится к одному из контроллеров
+            * Обработка пользовательских действий
+            * Взаимодействие с другими контроллерами
+
+            Note:
+
+            - Загрузка вью, показ, скрытие, адаптация к размерам
+            - Взаимодействие - может быть как напрямую, так и через модель
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Навигация
+
+            * `UINavigationController`
+            * Модальный показ: presenting-presented
+            * `UITabBarController`
+            * `UIPageViewController`
+            * `UISplitViewController`
+
+            [View Controller Catalog for iOS](https://developer.apple.com/library/ios/documentation/WindowsViews/Conceptual/ViewControllerCatalog/Introduction.html)
+
+            Note:
+
+            - Боковое меню - не стандартно
+            - В каталог помимо контейнеров входят и контентные контроллеры
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## `UINavigationController`
+
+            ![UINavigationController](04mvc/navigation-controller.png) <!-- .element: style="height: 70%" -->
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## `UITabBarController`
+
+            ![UITabBarController](04mvc/tabbar-controller.png) <!-- .element: style="height: 70%" -->
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Пример приложения
+
+            ![Контроллеры](04mvc/controllers-app.png)
+
+            Note:
+
+            - Какие здесь есть контроллеры?
+            - Понятие Master-Detail
+            - За какую часть приложения они отвечают?
+            - Как они взаимодействуют друг с другом?
+            - Попробуйте построить иерархию?
+            - Как взаимодействуют master и detail?
+            - Как родительский контроллер взаимодействует с дочерними?
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Иерархия контроллеров
+
+            * Content VC / Container VC
+            * Корневой контроллер - initial в storyboard
+            * Родительский управляет дочерними: показ, скрытие, область экрана
+            * Слабая связность между parent-child и master-detail
+            * Иерархия может меняться в ходе работы приложения
+            * Отдельная иерархия модального показа presenting-presented
+
+        </script></section>
+        <section class="no-logo" data-markdown><script type="text/template">
+            # Собираем приложение
+
+            Note:
+
+            - Вместе собрать приложение по ДЗ №2
+              - экраны, переходы, контролы, реакция на нажатия
+              - segue, unwind segue
+              - как это делать вручную без segue
+              - как добавлять картинки
+              - какие есть основные настройки у вью и контроллеров
+              - Показать место моделей в архитектуре
+              - боковое меню
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Рубежный контроль
+
+            1. Что этот код выведет в консоль?
+            2. Утечка памяти — найти и обезвредить.
+            3. Утечка памяти — найти и обезвредить.
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Домашнее задание
+
+            * Доделываем ДЗ №2, кто еще не успел
+            * Применяем полученные сегодня знания в проекте
+
+            Note:
+
+            - Сказать, сколько уже сдало
         </script></section>
         <section data-markdown><script type="text/template">
             ## Следующее занятие
 
-            * 2 марта, 18:30
-            * Знакомство с Xcode и Objective-C
-        </script></section>
-        <section data-markdown><script type="text/template">
-            ## Домашнее задание №0
-
-            Срок 2 недели, оценка в рамках ДЗ №2
+            * 23 марта, 18:30
+            * UIView и UIViewController
         </script></section>
         <section class="dark-background"
             data-markdown
