@@ -26,13 +26,16 @@
 
             \* Не влияет на оценку
 
-            Note:
-
-1.3.4 В начале занятия преподавателю рекомендуется напомнить студентам, какой части курса посвящена текущая лекция, кратко связать ее с предыдущей («На прошлом занятии мы закончили на том-то, а сегодня продолжим рассмотрение этой темы… переходим к следующему большому разделу….»). В конце лекции рекомендуется подытожить прошедшее занятие, повторить при необходимости основные тезисы, сделать краткий анонс на следующее занятие.
             </script>
         </section>
         <section data-markdown><script type="text/template">
             ## На прошлом занятии
+
+            * Последовательность запуска приложения
+            * Основные слои и объекты приложения
+            * Model-View-Controller в iOS
+            * Иерархия представлений и контроллеров
+            * Навигация
 
             Note:
 
@@ -68,6 +71,27 @@
             - Презентация как обычно доступна на сайте
             
         </script></section>
+        <section class="no-logo" data-markdown><script type="text/template">
+            # Разбор контрольной
+        </script></section>
+        <section class="no-logo" data-markdown><script type="text/template">
+            # Разбор ДЗ
+
+            Note:
+
+            - Навигация с помощью segue - создание навигации - было
+            - Передача информации между контроллерами - было
+            - Составные кастомные вью
+            - Осталось еще много тем, но как мы уже сейчас можем собрать работающий проект
+            - С нуля вместе собрать мой проект
+            - То, что будет дальше:
+              - Таблицы
+              - Автолэйаут
+              - Где в моем проекте MVC?
+              - Конфигурирование view - вывод информации
+              
+
+        </script></section>
         <section data-markdown><script type="text/template">
             ## Состояния приложения
 
@@ -88,6 +112,10 @@
             * Inactive: скриншот для менеджера задач и для запуска
             * Сохранение важных данных
             * Освобождение памяти, чтобы сократить вероятность выгрузки из памяти
+
+            Note:
+
+            - В стандартном шаблоне в AppDelegate подробно расписано какие события генерят переход состояния и для чего их может понадобиться отслеживать.
 
         </script></section>
         <section class="no-logo" data-markdown><script type="text/template">
@@ -115,6 +143,8 @@
             - Можно и нужно создавать собственные вью
             - Стандартные вью имеют ограниченные возможности кастомизации,
             - не предполагают создание подклассов или добавление дочерних вью
+            - Подробнее на лекции про кастомные вью
+            - Демо - ячейки, как составные кастомные вью - создание класса, прототип в storyboard, аутлеты
 
         </script></section>
         <section data-markdown><script type="text/template">
@@ -335,7 +365,7 @@
 
         </script></section>
         <section data-markdown><script type="text/template">
-            ## Для самостоятельного изучения
+            ## Факультативно
 
             * Собственный контроллер-контейнер
             * Анимированные и интерактивные переходы
@@ -349,18 +379,10 @@
 
         </script></section>
         <section data-markdown><script type="text/template">
-            ## Run Loop
-        </script></section>
-        <section data-markdown><script type="text/template">
-            ## Домашнее задание №0
-
-            Срок 2 недели, оценка в рамках ДЗ №2
-        </script></section>
-        <section data-markdown><script type="text/template">
             ## Следующее занятие
 
-            * 2 марта, 18:30
-            * Знакомство с Xcode и Objective-C
+            * 30 марта, 18:30
+            * Сетевое взаимодействие
         </script></section>
         <section class="dark-background"
             data-markdown
@@ -387,7 +409,7 @@ Reveal.initialize({
     center: true,
     slideNumber: true,
     transition: 'slide', // none/fade/slide/convex/concave/zoom
-    showNotes: true,
+    showNotes: false,
 
     // Optional reveal.js plugins
     dependencies: [
