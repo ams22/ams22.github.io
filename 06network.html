@@ -26,61 +26,281 @@
 
             \* Не влияет на оценку
 
-            Note:
-
-            1.3.4 В начале занятия преподавателю рекомендуется напомнить студентам, какой части курса посвящена текущая лекция, кратко связать ее с предыдущей («На прошлом занятии мы закончили на том-то, а сегодня продолжим рассмотрение этой темы… переходим к следующему большому разделу….»). В конце лекции рекомендуется подытожить прошедшее занятие, повторить при необходимости основные тезисы, сделать краткий анонс на следующее занятие.
-
-            - NSURLSession
-            - background
-            - NSURLProtocol
-            - AFNetworking
-            - как загружать картиночки?
-            - кэширование
-            - парсинг JSON
-            - Reachability
-            - HTTP Stubs
-            - какие еще полезные библиотеки?
-            - Архитектура
-
             </script>
         </section>
         <section data-markdown><script type="text/template">
-            ## На прошлом занятии
+            ## На предыдущих занятиях
+
+            * Изучили язык Objective-C
+            * Научились строить простые интерфейсы и навигацию между экранами
+            * Научились реагировать на события от UI
 
             Note:
 
-            - Возникли ли какие-нибудь вопросы по этим темам?
+            - Возникли ли какие-нибудь вопросы по этим темам или по прошлому занятию?
 
         </script></section>
         <section data-markdown><script type="text/template">
             ## На этом занятии
 
-            Note:
-
-            - Сразу завести будильник на перерывы
+            * Создание сетевых запросов
+            * Выполнение сетевых запросов
+            * Разбор ответов от сетевых запросов
 
         </script></section>
         <section data-markdown><script type="text/template">
             ## Материалы
 
+            * [Networking Overview](https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview)
+            * [URL Session Programming Guide](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/URLLoadingSystem)
+            * WWDC'12 [Networking Best Practices](https://developer.apple.com/videos/play/wwdc2012/706/)
+            * WWDC'15 [Networking with NSURLSession](https://developer.apple.com/videos/play/wwdc2015/711/)
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Сетевые API
+
+            От низкоуровневых к высокоуровневым
+
+            * POSIX/BSD Sockets
+            * CFNetwork
+            * NSURL*
+              * NSURLConnection (устар.)
+              * *NSURLSession*
+            * Multipeer Connectivity Framework, GameKit, WebKit
+
             Note:
 
-            - Презентация как обычно доступна на сайте
-        </script></section>
-        <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-            ## Домашнее задание №0
+            - CFNetwork
+              - C-based
+              - Включает работу с сокетами, поддержку RunLoop, поддержку FTP, HTTP и прочее
+              - Поверх него реализованы NSURL*
+            - остальные - только для HTTP (не зря слово URL в названии)
+            - Еще для сокетов в iOS 9 появился NSURLSessionStreamTask
 
-            Срок 2 недели, оценка в рамках ДЗ №2
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Материалы
+
+            Низкоуровневые API
+
+            * [Networking Programming Topics](https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/NetworkingTopics)
+            * [CFNetwork Programming Guide](https://developer.apple.com/library/ios/documentation/Networking/Conceptual/CFNetwork)
+            * [Setting Up Socket Streams](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Streams/Articles/NetworkStreams.html)
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Классы NSURLSession API
+
+            * NSURLSession
+            * NSURLSession(Data|Download|Upload)Task
+            * NS(Mutable)URLRequest
+            * NS(HTTP)URLResponse
+
+            Note:
+
+            - NSURLSession - default, ephemeral (хранит данные только в памяти), background
+            - Про background NSURLSession
+            - Task - запрос, его создаем из сессии и запускаем, data/upload/download
+            - request/response - value-объекты
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## App Transport Security
+
+            * По-умолчанию блокирует все «небезопасные» запросы
+              * Только HTTPS TLS 1.2 с доверенным сертификатом
+            * Можно задавать исключения
+            * Info.plist → NSAppTransportSecurity → NSAllowsArbitraryLoads → YES
+
+            Note:
+
+            - Прежде, чем приступить к демо
+
+        </script></section>
+        <section class="no-logo" data-markdown><script type="text/template">
+            # Простой HTTP запрос
+
+            Note:
+
+            - Демо
+            - Конфигурация сессии
+            - Формирование запроса: GET, POST
+            - Формирование параметров: NSURLQueryItems, GTM
+            - Асинхронность: block callbacks, delegate
+            - dispatch на main
+            - Проверка ответа: HTTP-статус, данные, десериализация
+            - Оборачивание в класс-сервис
+            - Прогресс запроса
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## [AFNetworking](https://github.com/AFNetworking/AFNetworking)
+
+            * Фреймворк для слоя HTTP-клиентов
+            * Более простой API для простых случаев
+            * Модульная сериализация/десериализация
+            * Утилиты: reachability, SSL pinning, UIKit, загрузка картинок, network activity indicator, multipart form, OAuth1/2
+
+            Note:
+
+            - Самая популярная сторонняя библиотека для iOS
+            - Стала менее актуальна с появлением NSURLSession
+            - Демо
+            - Архитектура: subclass AFHTTPSessionManager, singleton, requestSerializer, responseSerializers, baseURL
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Парсинг
+
+            * NSJSONSerialization
+            * NSXMLParser
+            * libxml2
+            * Для HTML: libtidy, [Hpple](https://github.com/topfunky/hpple) ([Tutorial](https://www.raywenderlich.com/14172/how-to-parse-html-on-ios))
+
+            Note:
+
+            - Существует множество сторонних библиотек для JSON, но смысла в них мало. Они либо необходимы для старых версий iOS, либо пытаются оптимизировать скорость выполнения.
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Структура → Модель
+
+            * Обязательная валидация входных данных
+            * Вручную — много повторяющегося кода
+            * [Mantle](https://github.com/Mantle/Mantle), [EasyMapping](https://github.com/lucasmedeirosleite/EasyMapping)
+
+            Note:
+
+            - Почему нужна валидация: пример приложения музыка VK, сложность с быстрым обновлением
+            - Ошибка на сервере, обновление API
+            - Демо
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Картинки
+
+            * Загрузка
+            * Кэширование
+            * Отображение
+            * [Haneke](https://github.com/Haneke/Haneke), [SDWebImage](https://github.com/rs/SDWebImage), [FastImageCache](https://github.com/path/FastImageCache), AFNetworking
+
+            Note:
+
+            - Загрузка через AFNetworking - демо
+            - NSURLCache
+            - Важные моменты, которые надо учесть:
+              - более удобное API - непосредственно привязывается к image view
+              - когда картинка загрузилась, view может уже не быть на экране
+              - или view уже будет отображать другие данные (особенно в table view)
+              - progress indicator
+              - декодирование, ресайз, сохранение на диск картинки может мешать плавности скроллинга, это надо делать правильно и на фоновом потоке
+              - чистка кэша
+              - прогрев кэша
+              - контроль того, что одна и та же картинка не будет загружаться несколько раз
+              - оптимизированное декодирование по сравнению со стандартным
+            - SDWebImage
+              - поддержка анимированных gif, webp
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## File Upload/Download
+
+            * NSURLSession(Upload|Download)Task
+            * Не занимает место в памяти
+            * Может выполняться пока приложение не запущено
+            * POST Body нужно формировать вручную
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Best Practices
+
+            * Асинхронность, неблокирующий UI
+            * Обработка ошибок на всех уровнях
+            * Обязательная проверка входных данных
+            * Возможность отмены запроса
+            * Использование SSL
+
+            Note:
+
+            - Всегда проверяйте как это будет работать на плохом соединении
+            - captive portals
+            - SSL pinning, возможность прослушивания
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Утилиты
+
+            * [Encoding URL Data](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/URLLoadingSystem/WorkingwithURLEncoding/WorkingwithURLEncoding.html), NSURL, NSURLComponents, NSURLQueryItem
+            * [Google Toolbox for Mac](https://github.com/google/google-toolbox-for-mac/tree/master/Foundation)
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## OAuth
+
+            * Готовая реализация в нативном SDK сервиса
+            * [gtm-oauth2](https://github.com/google/gtm-oauth2)
+            * Пример в коде
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Reachability
+
+            * Для изменения UI
+            * Для повтора неудавшегося запроса
+            * Для сокращения объема передаваемых данных
+            * Не для запрета запросов
+            * Библиотеки
+              * [Reachability Sample Code](https://developer.apple.com/library/ios/samplecode/Reachability/Introduction/Intro.html)
+              * [GCNetworkReachability](https://github.com/GlennChiu/GCNetworkReachability)
+
+            Note:
+
+            - Статус reachability меняется только после попытки запроса
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## NSURLProtocol
+
+            * Перехват любых запросов внутри приложения
+            * Реализация поддержки других протоколов
+            * Поддержка кастомных схем (x-my-app://)
+            * Тестирование: [OHHTTPStubs](https://github.com/AliSoftware/OHHTTPStubs)
+
+            NSHipster: [NSURLProtocol](http://nshipster.com/nsurlprotocol/)
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Web View
+
+            * SafariViewController
+            * UIWebView
+            * WKWebView
+
+            Note:
+
+            - UIWebView - любое форматирование и скрипты - используется в почте, в веб-браузерах, для страниц помощи
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Факультативно
+
+            * Bonjour, [NSNetServices](https://developer.apple.com/library/ios/documentation/Networking/Conceptual/NSNetServiceProgGuide)
+            * [Multipeer Connectivity](https://developer.apple.com/library/ios/documentation/MultipeerConnectivity/Reference/MultipeerConnectivityFramework)
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Домашнее задание №3
+
+            Реализовать в своем проекте запрос любых данных по сети.
+
+            Срок 1 неделя, максимальная оценка 6 баллов
         </script></section>
         <section data-markdown><script type="text/template">
             ## Следующее занятие
 
-            * 2 марта, 18:30
-            * Знакомство с Xcode и Objective-C
+            * 6 апреля, 18:30
+            * Создание собственных UIView
         </script></section>
         <section class="dark-background"
             data-markdown
