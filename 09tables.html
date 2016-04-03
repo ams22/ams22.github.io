@@ -42,6 +42,13 @@
         <section data-markdown><script type="text/template">
             ## На этом занятии
 
+            * Data source и delegate
+            * Модель данных таблицы и `NSIndexPath`
+            * Внешний вид и составные части таблиц
+            * Правила работы с ячейками
+            * Архитектура собственного кода
+            * `UICollectionViewLayout`
+
             Note:
 
             - Сразу завести будильник на перерывы
@@ -50,24 +57,400 @@
         <section data-markdown><script type="text/template">
             ## Материалы
 
+            * [View Programming Guide for iOS](https://developer.apple.com/library/ios/documentation/WindowsViews/Conceptual/ViewPG_iPhoneOS)
+            * [Table View Programming Guide for iOS](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/TableView_iPhone)
+            * [Collection View Programming Guide for iOS](https://developer.apple.com/library/ios/documentation/WindowsViews/Conceptual/CollectionViewPGforIOS)
+            * WWDC'12 [Introducing Collection Views](https://developer.apple.com/videos/play/wwdc2012/205/)
+            * objc.io [Lighter View Controllers](https://www.objc.io/issues/1-view-controllers/lighter-view-controllers/), [Clean Table View Code](https://www.objc.io/issues/1-view-controllers/table-views/)
+
             Note:
 
             - Презентация как обычно доступна на сайте
         </script></section>
         <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-            ## Домашнее задание №0
+            ## `UITableView`
 
-            Срок 2 недели, оценка в рамках ДЗ №2
+            * Отображение иерархических списков информации
+              * Скроллинг
+              * В одну колонку
+              * Состоит из строк-ячеек
+            * Редактирование
+            * Дополнительные украшения
+              * Индекс
+              * Секции
+              * Заголовки/колонтитулы
+
+            Note:
+
+            - Сложный и применимый в разнообразных случаях элемент
+            - Table view был одной из ключевых фич на первой презентации айфона. Тогда всех поразила плавность скроллинга
+            - Таблица отображается одномерно, хотя модель данных у нее двумерная
+
+        </script></section>
+        <section>
+            <section data-markdown><script type="text/template">
+                ## Примеры использования
+
+                ![Системные приложения](09tables/ios-tableviews.png) <!-- .element: style="height: 70%" -->
+
+                Note:
+
+                - Стандартное оформление в приложениях Apple
+
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Меню, лента новостей
+
+                ![VK](09tables/vk-tableviews.png) <!-- .element: style="height: 70%" -->
+
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Список сообщений
+
+                ![Messages](09tables/messages-tableview.jpg) <!-- .element: style="height: 70%" -->
+
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Всплывающее меню
+
+                ![Sheet](09tables/sheet-tableview.png) <!-- .element: style="height: 70%" -->
+
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## О приложении
+
+                ![О приложении](09tables/about-tableview.png) <!-- .element: style="height: 70%" -->
+
+                Note:
+
+                - Меню настроек
+                - Для лэйаута
+
+            </script></section>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## Структура данных
+
+            * Одномерная: 1 × row
+            * Двумерная: section × row
+            * Дополнительные уровни вложенности с помощью `UINavigationController`
+            * Или с помощью кастомных ухищрений
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Стили таблиц
+
+            ![Plain](09tables/plain.png) <!-- .element: style="height: 70%" -->
+            ![Grouped](09tables/grouped.png) <!-- .element: style="height: 70%" -->
+
+            Note:
+
+            - Plain vs grouped – когда надо более явно визуально отделить разделы
+            - Table header / footer
+            - Section header / footer
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Дополнительные фичи
+
+            ![Индекс, режим редактирования](09tables/index-edit.png) <!-- .element: style="height: 70%" -->
+
+            Note:
+
+            - Добавление, удаление, перемещение ячеек
+            - Групповые операции
+            - Управляется делегатом
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## `UITableViewCell`
+
+            * Подкласс `UIView`
+            * Задает атрибуты и поведение ячеек в `UITableView`
+            * Стандартные стили
+            * Набор стандартных подвью
+            * Произвольное содержимое
+
+            Note:
+
+            - Основное содержимое таблицы
+            - как UIView, только с некоторыми особенностями
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Стили ячеек
+
+            ![Стили ячеек](09tables/cell-styles.png) <!-- .element: style="height: 70%" -->
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Подвью ячейки
+
+            ![Подвью ячейки](09tables/cell-subviews.png)
+
+            Note:
+
+            - main label, detail label, image, content view, background view, accessory view
+            - accessory: disclosure, detail disclosure, checkmark
+            - При включении режима редактирования content view может сужаться, это надо предусмотреть
+            - Но есть возможность и полностью кастомную ячейку сделать.
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Архитектура `UITableView`
+
+            * Наследуется от `UIScrollView`
+            * `UITableViewDataSource`
+            * `UITableViewDelegate`
+            * `NSIndexPath` (`section`, `row`)
+
+            Note:
+
+            - Все свойства и делегатные методы от scroll view доступны
+            - Следуя принципам MVC table view не работает с моделью напрямую. Для этого нужен data source. Обычно в качестве него выступает контроллер.
+              - Всего два обязательных метода: numberOfRowsInSection и cellForRowAtIndexPath
+            - Delegate - внешний вид и поведение
+              - Выбор ячейки: в код передается index path didSelectRowAtIndexPath
+              - accessoryButtonTapped...
+            - Адресация строк
+              - NSIndexPath нужен для адресации во вложенных массивах
+              - row, section - это расширение специально для table view
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## `UITableViewDataSource`
+
+            ![Диаграмма взаимодействия](09tables/communication.png)
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Использование table view
+
+            ![Архитектура кода](09tables/uml.svg)
+
+            Note:
+
+            - Рассинхронизация между моделью и таблицей - частый источник крэшей
+            - Т.е. датасорс должен подписываться на изменения в модели данных, либо делать снапшот модели для таблицы.
+            - Способы обновить таблицу:
+              - reloadData
+              - beginUpdates/endUpdates совместно с insertSections/deleteSections, insertRows/deleteRows, reloadSections/reloadRows
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## `cellForRowAtIndexPath`
+
+            * Cell reuse
+              * Reuse identifier
+              * Register/dequeue
+            * Конфигурирование ячеек
+            * Асинхронное конфигурирование
+            * Target-action
+
+            Note:
+
+            - cellForRow... возвращает сконфигурированный объект UITableViewCell. Этот метод также вызывается при скроллинге
+            - Cell reuse: два уровня - удаление невидимых вью, и переиспользование вью из пула
+              - Не создаем ячейки сами, используем dequeue
+              - reuseIdentifier
+              - регистрация reuse identifier-ов
+            - Конфигурирование ячеек полностью, включая сброс дефолтных значений
+            - Можно сбрасывать дефолтные значение в prepareForReuse
+            - Загрузка картинок по сети и другие асинхронные действия, prepareForReuse
+            - Target-action из ячейки
+              - prepareForReuse
+              - Как привязать действие к модели?
+                - Модель в свойство - плохо
+                - indexPath в свойство
+                - через блок
+                - проход по visible cells
+
+            Пример кода
+
+        </script></section>
+        <section class="no-logo" data-markdown><script type="text/template">
+            # Демо
+
+            * Статические ячейки в IB
+            * Динамические прототипы
+              * В Interface Builder
+              * В коде
+              * Загрузка из XIB
+
+            Note:
+
+            - Создание table view
+            - Можно делать статические ячейки.
+              - Не нужно реализовывать дата сорс
+              - Конфигурируем ячейки с помощью аутлетов в viewDidLoad
+            - Можно создавать прототипы для динамических ячеек.
+              - Динамические ячейки также можно создавать и в коде и загружать из отдельных XIB-ов.
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Собственные ячейки
+
+            * Подкласс `UITableViewCell`
+            * `contentView`
+            * Плавность скроллинга
+            * `selected`, `highlighted`
+            * Ячейки с произвольной высотой
+              * `heightForRowAtIndexPath`
+              * [Working with Self-Sizing Table View Cells](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/WorkingwithSelf-SizingTableViewCells.html)
+
+            Note:
+
+            * Создаем собственный подкласс UITableViewCell, если нужен кастомный внешний вид
+            * Все свои контролы добавляем в contentView
+            * Для плавного скроллинга (60fps) конфигурирование, лэйаут и рендеринг должно быть очень быстрым
+              * Старайтесь избегать прозрачности, задавайте backgroundColor, используйте opaque
+              * Длительные операции асинхронно
+              * Убедитесь, что reuse действительно работает
+            * Задание высоты
+              * Через делегатный метод
+              * estimated height
+              * Через autolayout
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Ещё API table view
+
+            * Доступ к ячейкам и index path (выбранные, видимые)
+            * Скроллинг
+            * `UITableViewController`
+              * `refreshControl`
+            * Индекс
+            * Режим редактирования
+            * Перетаскивание ячеек
+
+            Note:
+
+            UITableViewController имеет встроенную функциональность для некоторых аспектов работы с table view: управление выбором, редактирование, поддержка ячеек с текстовыми полями, поддержка NSFetchedResultsController, конфигурация таблицы и т.д.
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## `UICollectionView`
+
+            ![Collection View](09tables/collection-view.png)
+
+            Note:
+
+            Очень похоже на table view, но не является его заменой
+
+        </script></section>
+        <section>
+            <h2>Collection vs table view</h2>
+
+            <ul class="plus-minus">
+              <li class="plus">Архитектура: data source, delegate, cells, index path, reuse</li>
+              <li class="plus">Supplementary views</li>
+              <li class="plus"><code>UI(Collection|Table)ViewController</code></li>
+            </ul>
+
+            <aside class="notes">
+                <ul>
+                    <li>Та же архитектура: датасорс, делегат, ячейки, indexPath, reuse и т.д.</li>
+                    <li>Supplementary views - вместо section/table header/footer - и они тоже reusable. Более обобщенное понятие - не привязаны к секциям, смысл задается полностью вашим кодом и layout-объектом</li>
+                </ul>
+            </aside>
+        </section>
+        <section>
+            <h2>Collection vs table view</h2>
+
+            <ul class="plus-minus">
+                <li class="minus">Не только вертикальный скроллинг</li>
+                <li class="minus">Не только расположение в одну колонку</li>
+                <li class="minus">Decoration views</li>
+                <li class="minus">Нет стандартных стилей</li>
+                <li class="minus">Режим редактирования</li>
+            </ul>
+
+            <aside class="notes">
+                <ul>
+                    <li>Можно скроллить горизонтально, в виде сетки, по кругу и вообще как угодно</li>
+                    <li>Множество готовых и кастомных лэйаутов (были примеры на WWDC)</li>
+                    <li>Кроме ячеек и хедеров тут еще есть decoration views - они не связаны с моделью, а являются свойством объекта layout-а. Пример: фон</li>
+                    <li>У ячеек supplementary views нет готовых стандартных стилей</li>
+                    <li>Поддержка редактирования в виде долгого нажатия на ячейку</li>
+                    <li>Можно вешать жесты для манипулирования параметрами лэйаута или перемещения элементов</li>
+                    <li>Если UICollectionView - это то же самое, что и table view, но круче, то почему есть смысл использовать table view?</li>
+                    <li>Различная уже готовая встроенная функциональность: стандартные стили, разделители, редактирование</li>
+                </ul>
+            </aside>
+        </section>
+        <section>
+            <section data-markdown><script type="text/template">
+                ## Примеры collection view
+
+                ![Кастомный лэйаут 1](09tables/collection1.png)
+
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Pinterest
+
+                ![Пинтерест](09tables/pin0terest.png) <!-- .element: style="height: 70%" -->
+
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Не только сетка
+
+                ![Books Layout](09tables/books.png)
+
+            </script></section>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## `UICollectionViewLayout`
+
+            ![Архитектура Collection View](09tables/collection-architecture.png) <!-- .element: style="height: 70%" -->
+
+            Note:
+
+            - Отдает атрибуты лэйаута в коллекцию
+            - Стандартный flow лэйаут делает расположение в виде сетки или в одну линию (что является вырожденным случаем сетки). Для всего остального надо писать кастомный класс лэйаута.
+              - Вычислить общий размер контента
+              - Предоставить атрибуты для каждого элемента
+            - Возможные кастомизации:
+              - Размер элементов, в том числе динамический через делегат
+              - Отступы и промежутки между элементами
+            - Можно подклассить flow layout
+              - добавление дополнительных supplementary или decoration
+              - поправить любые атрибуты лэйаута, возвращаемые стандартным классом, без значительного изменения логики лэйаута
+              - задать начальные или конечные атрибуты для удаления или добавления элементов
+            - Можно анимированно менять лэйаут
+              - В самом лэйауте также есть встроенная поддержка анимаций для перемещения, добаления, удаления элементов
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Поддержка жестов
+
+            * Жесты всегда добавляются к самому collection view, а не к элементам
+            * Изменение атрибутов лэйаута
+            * Перемещение элементов
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Что ещё в collection view
+
+            * Создание кастомных лэйаутов 
+              * WWDC'12 [Advanced Collection Views and Building Custom Layouts](https://developer.apple.com/videos/play/wwdc2012/219/)
+            * Возможность задать, где остановится скроллинг
+            * Анимированные и интерактивные переходы между экранами с collection view
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Домашнее задание №6
+
+            * Наполнить содержимым все table view или collection view в приложении (можно тестовыми данными).
+            * Создать кастомные ячейки, где необходимо.
+            * Если идея приложения не предусматривает вывод списковых данных, добавить экран «О программе» со статической таблицей.
+
+            Срок 1 неделя, оценка 6 баллов
         </script></section>
         <section data-markdown><script type="text/template">
             ## Следующее занятие
 
-            * 2 марта, 18:30
-            * Знакомство с Xcode и Objective-C
+            * 
+            * 
         </script></section>
         <section class="dark-background"
             data-markdown
