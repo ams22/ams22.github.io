@@ -42,6 +42,12 @@
         <section data-markdown><script type="text/template">
             ## На этом занятии
 
+            * История и предпосылки появления Swift и Objective‑C
+            * В чем основные отличия
+            * Что выбрать для своего проекта
+            * Как использовать оба языка в одном проекте
+            * Уникальные возможности Objective-C
+
             Note:
 
             - Сразу завести будильник на перерывы
@@ -50,24 +56,277 @@
         <section data-markdown><script type="text/template">
             ## Материалы
 
+            * [The Swift Programming Language (Swift 2.1)](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language)
+            * [Using Swift with Cocoa and Objective-C](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps)
+            * WWDC'14 [Introduction to Swift](https://developer.apple.com/videos/play/wwdc2014/402/)
+            * WWDC'15 [Protocol-Oriented Programming in Swift](https://developer.apple.com/videos/play/wwdc2015/408/)
+            * Много всего на WWDC'14 и '15
+
             Note:
 
             - Презентация как обычно доступна на сайте
         </script></section>
-        <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-            ## Домашнее задание №0
+        <section>
+            <h2>История Objective-C</h2>
 
-            Срок 2 недели, оценка в рамках ДЗ №2
+            <img src="15swift/objc-book.png" alt="Книга про Objective-C" style="height: 50%; float: right" />
+
+            <div style="max-width: 70%">
+                <ul>
+                    <li>Начало 80-х</li>
+                    <li>Авторы языка – предприниматели, исключительно практические соображения</li>
+                    <li>C + Smalltalk</li>
+                    <li>Совместимость с C – критически важна</li>
+                    <li>Идеи из Smalltalk – гибкость и удобство разработки</li>
+                </ul>
+            </div>
+
+            <aside class="notes">
+                Тонкая прослойка поверх C - первая версия вообще на макросах
+            </aside>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## `NS` = NextStep OS
+
+            ![NextStep](15swift/next-step.png) <!-- .element: style="height: 60%" -->
+
+            1988—1997
+
+            Note:
+
+            - Добавлена поддержка ObjC в GCC
+            - Разработан AppKit и Foundation
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Позаимствовано из Smalltalk
+
+            * Объектно-ориентированность
+            * Динамическая типизация
+            * Отправка сообщений
+              * В том числе синтаксис
+            * Introspection и Reflection – возможность видеть и динамически менять структуру программы во время выполнения
+
+            Note:
+
+            - Автор Smalltalk – Alan Kay – Xerox Palo Alto Research Center (PARC)
+            - Считается, что Smalltalk повлиял на многие языки, включая Java и большинство современных динамических языков
+            - Несмотря на все это, в 90% случаев ObjC используется как статический язык, но оверхед который с этим связан и невозможность оптимизировать некоторые вещи на этапе компиляции
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Наследие C
+
+            * Простые типы
+            * Указатели
+            * Ручное управление памятью
+            * Слабая<sup>[[Wikipedia](https://en.wikipedia.org/wiki/Strong_and_weak_typing)]</sup> статическая<sup>[[Wikipedia](https://en.wikipedia.org/wiki/Type_system#Static_type-checking)]</sup> типизация
+            * Отсутствие модульности
+
+            Note:
+
+            Слабая – это не недостаток, а просто термин
+
+            </script></section>
+        <section>
+            <section data-markdown><script type="text/template">
+                ## Тренды в языках
+    
+                * Функциональное программирование
+                * Состояние – это плохо
+                  * Изменяющееся состояние – это еще хуже
+                  * Разделяемое состояние – вообще ужас ужас
+                * Type inference – выведение типов
+    
+                Note:
+    
+                Swift идет в рамках этих трендов
+    
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Тренды в языках
+    
+                * Наследование – не лучший способ организации и расширения кода
+                  * Композиция
+                  * Protocol-oriented
+                  * Mixins
+                * Статическая типизация – это хорошо
+                * Краткость, простота синтаксиса, разумные умолчания
+    
+            </script></section>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## Objective-C пора на пенсию
+
+            * Hypercritical, 15.04.2011 [A Dark Age of Objective-C](http://5by5.tv/hypercritical/14)
+            ![John Siracusa](15swift/siracusa.png) <!-- .element: style="position: absolute; left: 100%; height: 80px" -->
+            * Ash Furrow, 11.02.2014 [We Need to Replace Objective-C](https://ashfurrow.com/blog/we-need-to-replace-objective-c/)
+            ![Ash Furrow](15swift/ash-furrow.png) <!-- .element: style="position: absolute; left: 100%; height: 90px" -->
+            * Появление сторонних инструментов
+              * Xamarin
+              * RubyMotion
+              * React Native
+              * Oxygene / RemObjects C#
+              * [wiki.haskell.org/IPhone](https://wiki.haskell.org/IPhone)
+
+            Note:
+
+            - Особенно учитывая то, что этот процесс может занять десятилетие
+            - динамическая природа сильно ограничивает возможности compile-time оптимизации
+              - динамизм означает то, что большая часть ошибок отлавливается только на этапе выполнения (крэши), а не на этапе компиляции
+              - если вы попробуете написать алгоритм, который очень часто взаимодействует с объектами, то увидите, что большая часть времени уходит на message passing
+            - http://daringfireball.net/2010/04/iphone_agreement_bans_flash_compiler – в developer agreement был прописан прямой запрет на использование чего-либо кроме ObjC
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Swift: 2.06.2014
+
+            ![Сравнение с другими языками](15swift/languages-diagram.png)
+
+            Note:
+
+            - C++ - статическая типизация
+            - Haskell - выведение типов, currying, state
+            - Rust - идея сделать язык мультипарадигменный, безопасный, практичный
+              - Синтаксис похож
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Производительность
+
+            * [A comparison of sorts between Objective-C and Swift](http://www.jessesquires.com/apples-to-apples/) (25.06.2014)
+              * Быстрее только с -Ofast – без рантайм проверок
+            * Mike Ash [Secrets of Swift's Speed](https://www.mikeash.com/pyblog/friday-qa-2014-07-04-secrets-of-swifts-speed.html)
+            * В Swift 2 улучшили производительность
+              * [vsco/swift-benchmarks](https://github.com/vsco/swift-benchmarks)
+
+            Note:
+
+            - Строгая статическая типизация и отсутствие передачи сообщений позволяют лучше оптимизировать в компиляторе
+            - Хотя SDK все еще ObjC-based
+            - Bounds chekins, integer overflow checking
+            - Mike Ash – теория, как свойства языка способствуют улучшению производительности
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Важные отличия
+
+            | Swift | Objective-C |
+            | :--- | :--- |
+            | Сильная статическая типизация | Слабая статическая типизация |
+            | Вызов методов | Отправка сообщений |
+            | Совместимость с C и Objective-C | Базируется на C |
+            | | Есть препроцессор |
+            | | Есть reflection и динамизм |
+
+            Note:
+
+            Цитата с презентации: Swift – это Objective-C без C
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Swift: 2.06.2014
+
+            ![Features](15swift/features.png)
+
+            Note:
+
+            - Namespaces
+            - Public/private/internal
+            - Protocol extensions
+            - Value types
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Сходства
+
+            * Objective-C runtime<sup>[[NSHipster](http://nshipster.com/swift-objc-runtime/)]</sup>
+            * SDK
+            * ARC
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Причины не использовать
+
+            * Язык продолжает изменяться
+            * Библиотеки и инструменты только начинают появляться
+            * Еще не устоялись best practices
+            * Отсутствие динамизма Objective-C (Отладка, OCMock, полезные утилиты, использование приватных API)
+            * Отсутствие макросов
+            * Нельзя напрямую использовать C++
+
+            Note:
+
+            - Что выбрать для своего проекта?
+            - В том числе IDE, компилятор, отладчик глючат и крэшатся
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## За Swift будущее
+
+            PYPL
+
+            ![PYPL](15swift/pypl.png) <!-- .element: style="width: 50%" -->
+
+            TIOBE
+
+            ![TIOBE](15swift/tiobe.png) <!-- .element: style="width: 50%" -->
+
+            Note:
+
+            - Постепенно все библиотеки и SDK будут депрекейтить Objective-C и использовать Swift так же как сейчас это происходит в фичами в iOS
+            - Изучать – определенно да, использовать – зависит от обстоятельств
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Два языка в проекте
+
+            * Синтаксис вызова методов совпадает
+            * Все системные фреймворки на Objective-C
+            * Атрибут `@objc`
+            * Bridging headers
+            * Не все возможности Swift доступны
+            * Отображение синтаксиса, типов, соглашений – в документации
+
+            Note:
+
+            - Nested types, Non-int enums, tuples, swift structs, swift top-level functions, swift global variables, и др.
+            - Нельзя в Obj-C подклассить класс заданный в Swift
+
+        </script></section>
+        <section class="no-logo" data-markdown><script type="text/template">
+            # Демо
+
+            [Presentations, Documentation, and Sample Code](https://developer.apple.com/swift/resources/)
+
+            Note:
+
+            - Crustacean – protocol oriented – для самостоятельного изучения
+            - Swift Standard Library – тоже
+            - Взять один из проектов и перевести его на Swift
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Уникальные возможности Objective-C
+
+            * Swizzling
+              * Логирование, проверки, AOP
+            * KVO
+            * KVC
+            * Introspection и Reflection
+            * Вызов приватных API
+            * Поддержка C++
+
+            Note:
+
+            JSON parsing в Swift, если останется время
+
         </script></section>
         <section data-markdown><script type="text/template">
             ## Следующее занятие
 
-            * 2 марта, 18:30
-            * Знакомство с Xcode и Objective-C
+            * 
+            * 
         </script></section>
         <section class="dark-background"
             data-markdown
