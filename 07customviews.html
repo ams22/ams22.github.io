@@ -26,13 +26,12 @@
 
             \* Не влияет на оценку
 
-            Note:
-
-1.3.4 В начале занятия преподавателю рекомендуется напомнить студентам, какой части курса посвящена текущая лекция, кратко связать ее с предыдущей («На прошлом занятии мы закончили на том-то, а сегодня продолжим рассмотрение этой темы… переходим к следующему большому разделу….»). В конце лекции рекомендуется подытожить прошедшее занятие, повторить при необходимости основные тезисы, сделать краткий анонс на следующее занятие.
             </script>
         </section>
         <section data-markdown><script type="text/template">
             ## На прошлом занятии
+
+            * Layout
 
             Note:
 
@@ -42,6 +41,14 @@
         <section data-markdown><script type="text/template">
             ## На этом занятии
 
+            * Слои Core Animation
+            * `UIControl`, действия
+            * Обработка жестов
+            * Связь с Interface Builder
+            * Рисование с помощью Core Graphics
+            * Рисование с помощью `CAShapeLayer`
+            * Кастомизация оформления с помощью `UIAppearance`
+
             Note:
 
             - Сразу завести будильник на перерывы
@@ -50,6 +57,12 @@
         <section data-markdown><script type="text/template">
             ## Материалы
 
+            * [View Programming Guide for iOS](https://developer.apple.com/library/ios/documentation/WindowsViews/Conceptual/ViewPG_iPhoneOS/Introduction/Introduction.html)
+            * [Event Handling Guide for iOS](https://developer.apple.com/library/ios/documentation/EventHandling/Conceptual/EventHandlingiPhoneOS/Introduction/Introduction.html)
+            * WWDC'11 [Core Animation Essentials](https://developer.apple.com/videos/play/wwdc2011/421/)
+            * WWDC'10 [Simplifying Touch Event Handling with Gesture Recognizers](https://developer.apple.com/videos/play/wwdc2010/120/)
+            * objc.io [Custom Controls](https://www.objc.io/issues/3-views/custom-controls/)
+
             Note:
 
             - Презентация как обычно доступна на сайте
@@ -57,7 +70,7 @@
         <section data-markdown><script type="text/template">
             ## Иерархия классов
 
-            ![Иерархия классов UIView](07customviews/uiview-class-hierarchy.png)
+            ![Иерархия классов UIView](07customviews/uiview-class-hierarchy.png) <!-- .element: style="height: 70%" -->
 
             Note:
 
@@ -101,6 +114,22 @@
             </script></section>
         </section>
         <section data-markdown><script type="text/template">
+            ## Задачи `UIView`
+
+            * Отображение содержимого
+              * Рисование
+              * Композиция
+            * Управление подвью
+            * Layout
+            * Реакция на жесты
+            * Абстрагирование
+
+            Note:
+
+            - Главная задача - показывать контент и управлять взаимодействием с этим контентом
+
+        </script></section>
+        <section data-markdown><script type="text/template">
             ## Точки кастомизации
 
             * `initWith(Coder|Frame):`
@@ -113,10 +142,8 @@
 
             Note:
 
-            - Главная задача - показывать контент и управлять взаимодействием с этим контентом
             - Переопределять все методы не обязательно
-            - Вью не должна зависеть от других компонентов приложения. Максимальная возможность переиспользования
-            - Стараться не использовать термины предметной области в названиях свойств и методов
+            - Это еще не все, полный список в документации
 
         </script></section>
         <section data-markdown><script type="text/template">
@@ -128,13 +155,19 @@
             * Паттерны взаимодействия: делегаты, блоки, target-action (`UIControl`)
             * Иногда проще дать публичный доступ к дочерним вью
 
+            Note:
+
+            - Вью не должна зависеть от других компонентов приложения. Максимальная возможность переиспользования
+            - Стараться не использовать термины предметной области в названиях свойств и методов
+
         </script></section>
         <section data-markdown><script type="text/template">
             ## Технологии iOS
 
-            * `UIAppearance`
+            * `UIAppearance` ([NSHipster](http://nshipster.com/uiappearance/))
             * Dynamic Type
-            * Accessibility (не только для людей с ограниченными возможностям)
+            * Accessibility (не только для людей с ограниченными возможностями)
+            * Autolayout
             * Локализация
 
             Note:
@@ -176,6 +209,8 @@
                 * `CGContext`
                 * Рисование с помощью Core Graphics
 
+                objc.io [Getting Pixels onto the Screen](https://www.objc.io/issues/3-views/moving-pixels-onto-the-screen/)
+
                 Note:
 
                 - Ручная отрисовка медленнее, чем другие способы, т.к. она задействует CPU
@@ -187,11 +222,11 @@
         <section data-markdown><script type="text/template">
             ## Модель взаимодействия
 
-            ![Модель взаимодействия](07customviews/runtime-interaction.png)
+            ![Модель взаимодействия](07customviews/runtime-interaction.png) <!-- .element: style="height: 70%" -->
 
         </script></section>
-        <section data-markdown><script type="text/template">
-            ## Демо
+        <section class="no-logo" data-markdown><script type="text/template">
+            # Демо
 
             * `drawRect:`
             * `IBDesignable`, `IBInspectable`
@@ -259,14 +294,14 @@
             * Кривые Безье, линии, фигуры
             * Заливка, толщина, прерывистость
             * Скругление, частичное закрашивание
+            * [MRCircularProgressView](http://cocoadocs.org/docsets/MRProgress/)
 
             Note:
 
-            - Поддерживает анимации на уровне кривых
+            - Поддерживает анимации кривых
             - Отличный способ заменить простые картинки и drawRect:
             - Можно копировать код из Illustrator и других граф. программ с помощью спец плагинов
             - Сложная анимированная сцена из After Effects
-            - http://cocoadocs.org/docsets/MRProgress/0.5.1/
             - Настройки: скругление концов, возможность закрасить частично на N%
             - Растеризация происходит на CPU, поэтому при большой сложности или частых обновлениях может тормозить
 
@@ -365,31 +400,47 @@
 
         </script></section>
         <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-            ## Домашнее задание №0
+            ## Анимация
 
-            Срок 2 недели, оценка в рамках ДЗ №2
+            * UIView Animation
+            * Core Animation
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Эффекты
+
+            * Настройки CALayer
+              * Тени
+              * Маски
+              * Скругление, обводка
+            * Заливка паттерном
+            * UIVisualEffectView
+            * Шрифты
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Отладка
+
+            * Замедленная анимация
+            * Настройки симулятора
+            * Time Profiler + Core Animation Instrument
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Домашнее задание №4
+
+            * Подумать, для каких элементов интерфейса вашего приложения можно сделать кастомный вью.
+            * Самостоятельно создать в приложении хотя бы один кастомный вью.
+            * Постарайтесь использовать как можно больше из рассмотренных на лекции тем.
+
+            Срок 1 неделя, оценка 6 баллов
         </script></section>
         <section data-markdown><script type="text/template">
             ## Следующее занятие
 
-            * 2 марта, 18:30
-            * Знакомство с Xcode и Objective-C
+            * 13 апреля, 18:30
+            * UITableView и UICollectionView
+
         </script></section>
         <section class="dark-background"
             data-markdown
