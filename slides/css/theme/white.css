@@ -387,6 +387,9 @@ body {
   overflow-y: auto  !important;
   overflow-x: hidden !important; }
 
+.reveal sup {
+  font-size: 60%; }
+
 html.dim .backgrounds {
   -webkit-filter: opacity(0.5);
   -moz-filter: opacity(0.5);

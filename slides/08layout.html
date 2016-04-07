@@ -34,6 +34,10 @@
         <section data-markdown><script type="text/template">
             ## На прошлом занятии
 
+            * Отправка HTTP-запросов
+            * Разбор ответов
+            * Преобразование JSON в объекты
+
             Note:
 
             - Возникли ли какие-нибудь вопросы по этим темам?
@@ -61,6 +65,10 @@
             * [Auto Layout Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/)
             * [Auto Layout Help](https://developer.apple.com/library/ios/recipes/xcode_help-IB_auto_layout/chapters/UnderstandingAutolayout.html)
             * [Adaptivity and Size Changes](https://developer.apple.com/library/prerelease/ios/featuredarticles/ViewControllerPGforiPhoneOS/TheAdaptiveModel.html)
+            * WWDC'12 [Introduction to Auto Layout for iOS and OS X](https://developer.apple.com/videos/play/wwdc2012/202/)
+            * WWDC'14 [Building Adaptive Apps with UIKit](https://developer.apple.com/videos/play/wwdc2014/216/)
+            * WWDC'15 [Mysteries of Auto Layout](https://developer.apple.com/videos/play/wwdc2015/218/)
+            * objc.io: [Advanced Auto Layout Toolbox](https://www.objc.io/issues/3-views/advanced-auto-layout-toolbox/)
 
             Note:
 
@@ -110,10 +118,6 @@
             * layoutSubviews, setNeedsLayout, layoutIfNeeded
             * sizeToFit, sizeThatFits:
 
-            ![Срабатывание setNeedsLayout](08layout/needs-layout.png)
-
-            http://blog.logichigh.com/2011/03/16/when-does-layoutsubviews-get-called/ 
-
             Note:
 
             - Здесь можно не только задавать позиции, но и например прятать или показывать дочерние вью, делать setNeedsDisplay при необходимости и все, что как-то связано с позиционированием.
@@ -123,12 +127,21 @@
 
         </script></section>
         <section data-markdown><script type="text/template">
-            ## Лэйаут в UIViewController: демо
+            ## setNeedsLayout
+
+            ![Срабатывание setNeedsLayout](08layout/needs-layout.png)
+
+            [When does layoutSubviews get called?](http://blog.logichigh.com/2011/03/16/when-does-layoutsubviews-get-called/)
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Лэйаут в UIViewController
 
             ![Демо: прямоугольник](08layout/controller-layout-demo.png)
 
             Note:
 
+            - Демо
             - Контроллер ответственен в том числе за лэйаут своих вью
             - Чаще всего корневой вью у контроллера - это объект базового класса UIView, а не нашего собственного подкласса, поэтому мы не можем переопределить его layoutSubviews. Вместо этого контроллер сам управляет этим процессом.
             - У UIViewController тоже есть собственный метод для код связанного с лэйаутом: viewWillLayoutSubviews и viewDidLayoutSubviews.
@@ -280,6 +293,23 @@
               * Система противоречива
               * Система неоднозначна
               * Положение вью не совпадает с расчетным
+
+            Note:
+
+            - Если система противоречива и не имеет решений, то в IB появится красная ошибка
+            - Часто это бывает при добавлении новых вью, созданных в коде, когда забывают сделать translatesAutoresizingMaskIntoConstraints = NO
+            - Если система неоднозначна и имеет больше одного решения, то в IB появится красная ошибка
+            - Необходимо добавить дополнительные констрейны или расставить приоритеты между опциональными констрейнами
+            - Если решения не совпадают с текущим положением в IB, то появится желтое предупреждение
+            - Чтобы не было ошибок, надо чтобы констрейны точно задавали и размер и положение всех вью
+            - Обычно самое сложное - это понять что именно пошло не так, после этого исправить проблему очень легко: добавить или удалить констрейны, задать приоритеты
+            - В IB назначайте своим вью имена, чтобы было проще ориентироваться в правилах autolayout
+            - Констрейнам тоже можно назначить имена с помощью свойства identifier, чтобы их было проще идентифицировать отлаживаясь в рантайме.
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Ошибки autolayout
+
             * В рантайме
               * Автоматически добавляемые констрейнты
               * Ошибки, вызванные слишком большим или слишком маленьким вью
@@ -289,28 +319,20 @@
 
             Note:
 
-            - Если система противоречива и не имеет решений, то в IB появится красная ошибка
-            - Часто это бывает при добавлении новых вью, созданных в коде, когда забывают сделать translatesAutoresizingMaskIntoConstraints = NO
-            - Если система неоднозначна и имеет больше одного решения, то в IB появится красная ошибка
-            - Необходимо добавить дополнительные констрейны или расставить приоритеты между опциональными констрейнами
             - В рантайме можно использовать метод hasAmbiguousLayout для проверки, exerciseAmbiguityInLayout для просмотра возможных вариантов разрешения ошибки, `_autolayoutTrace` для подробной информации о настройках autolayout связанных с иерархией вью.
-            - Если решения не совпадают с текущим положением в IB, то появится желтое предупреждение
-            - Чтобы не было ошибок, надо чтобы констрейны точно задавали и размер и положение всех вью
-            - Обычно самое сложное - это понять что именно пошло не так, после этого исправить проблему очень легко: добавить или удалить констрейны, задать приоритеты
             - Еще ошибки могут возникать в рантайме, например, когда при определенной ширине вью констрейны оказываются противоречивыми. Может написать в лог, а может крэшнуться. Рекомендуется не игнорировать то, что пишется в лог, даже если кажется, что это ни на что не влияет.
             - Если система сама может путем выбрасывания некоторых констрейнов сделать непротиворечивый лэйаут, она это делает.
             - брейкпоинт на UIViewAlertForUnsatisfiableConstraints
             - Кроме того констрейны можно визуализировать с помощью Xcode Debug View Hierarchy
             - Если вы работаете с autolayout, никогда не задавайте center, frame, bounds вручную
-            - В IB назначайте своим вью имена, чтобы было проще ориентироваться в правилах autolayout
-            - Констрейнам тоже можно назначить имена с помощью свойства identifier, чтобы их было проще идентифицировать отлаживаясь в рантайме.
 
         </script></section>
-        <section data-markdown><script type="text/template">
+        <section class="no-logo" data-markdown><script type="text/template">
+            # UIStackView
 
-            Stack views предоставляют простой способ использовать мощь autolayout без сложности констрейнтов
+            Простой способ использовать мощь autolayout без сложности констрейнтов <!-- .element: style="text-align: left" -->
 
-            Auto Layout Guide
+            Auto Layout Guide <!-- .element: style="text-align: right" -->
 
         </script></section>
         <section data-markdown><script type="text/template">
@@ -332,41 +354,60 @@
         <section data-markdown><script type="text/template">
             ## Size Classes
 
-            ![Size Classes](08layout/size-classes.png)
-
-            * Traits
-            * Regular vs Compact
-            * Поддержка в IB
-            * Поддержка в коде
+            ![Size Classes](08layout/size-classes.png) <!-- .element: style="height: 70%" -->
 
             Note:
-            - traits (черты) описывают свойства среды, в которой вью и контроллеры оперируют
-            - трэйты бывают: displayScale, UI idiom, наличие force touch
+
             - horizontal size class и vertical size class грубо описывают размеры элементов
             - regular vs compact и их комбинации для horizontal/vertical, и еще есть any
             - как regular и compact мапятся на различные модели устройств
-            - вы можете переопределить traits для своих дочерних view или view controller-ов
             - раньше до трэйтов было просто разделение по типу устройств - айфон и айпэд, были отдельные xib-ы и storyboard-ы для разных типов устройств. В iOS 8 это решили устранить это дублирование, а чтобы управлять различиями в показе добавили возможность привязывать констрейны и картинки к определенным size-class-ам, а также реагировать на смену size class в коде.
-            - теперь вместо ориентации - сочетание size class и size
             - не следует полагаться на то, что определенный size class соответствует какому-либо размеру
-            - не стоит привязывать к idiom при принятии решения о построении интерфейса
             - Через IB вы можете привязать к size class определенные констрейны, вью или атрибуты вью
             - превью в IB: выбор size class, preview на различных устройствах
 
         </script></section>
         <section data-markdown><script type="text/template">
-            ## Ориентация интерфейса: deprecated
+            ## Size Classes
 
-            interfaceOrientation (iOS 8.0)  Property
-            - willRotateToInterfaceOrientation:duration: (iOS 8.0)
-            - willAnimateRotationToInterfaceOrientation:duration: (iOS 8.0)
-            - didRotateFromInterfaceOrientation: (iOS 8.0)
-            - shouldAutorotateToInterfaceOrientation: (iOS 6.0)
-            - willAnimateFirstHalfOfRotationToInterfaceOrientation:duration: (iOS 5.0)
-            - didAnimateFirstHalfOfRotationToInterfaceOrientation: (iOS 5.0)
-            - willAnimateSecondHalfOfRotationFromInterfaceOrientation:duration: (iOS 5.0)
+            * Traits
+              * Display Scale, UI Idiom, Force Touch
+              * Size Classes
+            * Regular vs Compact
+            * Поддержка в IB
+            * Поддержка в коде
 
-            Осталось только свойство UIApplication statusBarOrientation
+            Note:
+
+            - traits (черты) описывают свойства среды, в которой вью и контроллеры оперируют
+            - вы можете переопределить traits для своих дочерних view или view controller-ов
+            - теперь вместо ориентации - сочетание size class и size
+            - не стоит привязывать к idiom при принятии решения о построении интерфейса
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Ориентация: deprecated
+
+            ```objectivec
+            @interface UIViewController
+            // Deprecated in iOS 8
+            - interfaceOrientation
+            - willRotateToInterfaceOrientation:duration:
+            - willAnimateRotationToInterfaceOrientation:duration:
+            - didRotateFromInterfaceOrientation:
+            // Deprecated in iOS 6
+            - shouldAutorotateToInterfaceOrientation:
+            // Deprecated in iOS 5
+            - willAnimateFirstHalfOfRotationToInterfaceOrientation:duration:
+            - didAnimateFirstHalfOfRotationToInterfaceOrientation:
+            - willAnimateSecondHalfOfRotationFromInterfaceOrientation:duration:
+            ```
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Ориентация: что осталось?
+
+            `-[UIApplication statusBarOrientation]`
 
         </script></section>
         <section data-markdown><script type="text/template">
@@ -381,7 +422,7 @@
             - willTransitionToTraitCollection:withTransitionCoordinator:
             ```
 
-            Мультитаскинг на iPad Air 2 – то же самое
+            Мультитаскинг на iPad Air 2 — то же, что и вращение экрана
 
         </script></section>
         <section data-markdown><script type="text/template">
@@ -394,15 +435,18 @@
 
         </script></section>
         <section data-markdown><script type="text/template">
-            ## Домашнее задание №0
+            ## Домашнее задание №5
 
-            Срок 2 недели, оценка в рамках ДЗ №2
+            Обеспечить с помощью Autolayout адаптацию интерфейса для разных устройств и для мультитаскинга в iOS 9.
+
+            Срок: 1 неделя, оценка 6 баллов
         </script></section>
         <section data-markdown><script type="text/template">
             ## Следующее занятие
 
-            * 2 марта, 18:30
-            * Знакомство с Xcode и Objective-C
+            * **Пятница 8 апреля**, 18:30
+            * Разработка кастомных `UIView`
+
         </script></section>
         <section class="dark-background"
             data-markdown

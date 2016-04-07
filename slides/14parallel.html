@@ -44,32 +44,301 @@
         <section data-markdown><script type="text/template">
             ## На этом занятии
 
+            * Базовые понятия
+            * Опасности и подводные камни
+            * API: `NSThread`, GCD, `NSOperation` и другие
+            * Инструменты синхронизации параллельного доступа к ресурсам
+            * Примеры
+            * Отладка
+
             Note:
 
+            - Зачем это изучать?
+              - responsiveness
+              - быстрее выполняется на многоядерных процессорах
             - Сразу завести будильник на перерывы
 
         </script></section>
         <section data-markdown><script type="text/template">
             ## Материалы
 
+            * [Concurrency Programming Guide](https://developer.apple.com/library/ios/documentation/General/Conceptual/ConcurrencyProgrammingGuide/)
+            * [Simple and Reliable Threading with NSOperation](https://developer.apple.com/library/ios/technotes/tn2109/_index.html)
+            * objc.io [Concurrent Programming](https://www.objc.io/issues/2-concurrency/)
+            * Mike Ash [Intro to Grand Central Dispatch](https://www.mikeash.com/pyblog/friday-qa-2009-08-28-intro-to-grand-central-dispatch-part-i-basics-and-dispatch-queues.html)
+            * WWDC'10 [Introducing Blocks and GCD on iPhone](https://developer.apple.com/videos/play/wwdc2010/206/)
+            * WWDC'12 [Asynchronous Design Patterns with Blocks, GCD, and XPC](https://developer.apple.com/videos/play/wwdc2012/712/)
+            * WWDC'15 [Advanced NSOperations](https://developer.apple.com/videos/play/wwdc2015/226/)
+
             Note:
 
             - Презентация как обычно доступна на сайте
         </script></section>
         <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-            ## Домашнее задание №0
+            ## Понятия
 
-            Срок 2 недели, оценка в рамках ДЗ №2
+            * Concurrency
+            * Parallelism
+            * Multithreading (многопоточность)
+            * Синхронный / асинхронный
+            * Процесс
+            * Тред
+            * Блок
+            * Задача
+            * Операция
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Concurrency vs Parallelism
+
+            SO [Concurrency vs Parallelism - What is the difference?](http://stackoverflow.com/q/1050222/947609)
+
+            Rob Pike [Concurrency is not Parallelism (it's better)](http://concur.rspace.googlecode.com/hg/talk/concur.html#landing-slide)
+
+            ![Concurrency vs Parallelism](14parallel/concurrency.png) <!-- .element: style="height: 50%" -->
+
+            Note:
+
+            - многопоточность на однопроцессорной системе - это concurrency с точки зрения выполнения, но с точки зрения абстракции - это параллелизм, т.к. выполняется context switching в произвольное время
+            - event-based (node.js), затык в IO
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Асинхронное выполнение
+
+            * `dispatch_async`, `dispatch_after`, `performSelectorInBackground:`, `NSTimer`
+            * Ввод-вывод
+            * Паттерны: callbacks, delegates, promises/futures, reactive
+
+            Note:
+
+            - Часто альтернатива асинхронному выполнению – блокировка треда. Почему это плохо?
+            - это не то же самое, что выполнение на другом потоке
+            - каким образом можно выполнить асинхронно, не переходя на другой поток? - event loop
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Процесс, тред
+
+            ![Многопоточный процесс](14parallel/process-thread.png) <!-- .element: style="height: 70%" -->
+
+            Note:
+
+            - тред - это основной примитив ОС, который обеспечивает параллельное выполнение внутри одного процесса
+            - треды существуют внутри процесса
+              - треды используют единое пространство памяти процесса
+              - у каждого треда свой стек вызовов
+            - само существование треда отнимает ресурсы, поэтому желательно держать их количество в каком-то разумном пределе
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Time sharing
+
+            ![Треды внутри процесса](14parallel/threads-time.png)
+
+            Note:
+
+            - для наличия палаллелизма не обязательно наличие нескольких ядер, параллельная модель выполнения может эмулироваться и на одном ядре.
+            - треды переключаются в случайные моменты времени, отсюда непредсказуемость
+            - переключение между тредами происходит достаточно быстро, но все же имеет некоторый оверхед
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Треды в iOS
+
+            ![Треды в iOS](14parallel/ios-common-threads.png)
+
+            Note:
+
+            - Разграничение главный тред / фоновый тред в iOS разработке
+            - работа с UI на главном треде
+            - некоторые системные API возвращают результаты не на главном треде
+
+        </script></section>
+        <section>
+            <h2>Блоки и параллелизм</h2>
+
+<pre style="font-size: small"><code class="lang-objectivec">AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+NSDictionary *bookData = @{@"name": @"Harry Potter"};
+[manager POST:@"http://myserver.com/validator/book"
+   parameters:bookData
+      success:^(AFHTTPRequestOperation *operation, id responseObject) {
+          [manager POST:@"http://myserver.com/book"
+             parameters:bookData
+                success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    [manager GET:[@"http://myserver.com/book/" stringByAppendingString:responseObject]
+                      parameters:nil
+                         success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                             // inform the user that the book was added, move to the appropriate screen
+                         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                             if([error.domain isEqual:NSURLErrorDomain]) {
+                                 // inform the user that there was a server communication problem
+                             } else {
+                                 // inform the user that the book could not be added (e.g. it was already added by someone else)
+                             }
+                         }];
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    if([error.domain isEqual:NSURLErrorDomain]) {
+                        // inform the user that there was a server communication problem
+                    } else {
+                        // inform the user that the book was added, however could not fetch its data
+                    }
+                }];
+      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+          if([error.domain isEqual:NSURLErrorDomain]) {
+              // inform the user that there was a server communication problem
+          } else {
+              // inform the user that the validation failed (i.e. the book data is not valid)
+          }
+      }];
+</code></pre>
+
+<aside class="notes">
+    <ul>
+        <li>Блоки обычно представляют небольшой самодостаточноый кусок кода, поэтому они идеальны как средство для инкапсуляции единицы работы, которая может быть выполнена параллельно или над элементами коллекции или в качестве колбэка по завершению другой операции.</li>
+        <li>Pyramid of Doom</li>
+        <li>Callback Hell</li>
+    </ul>
+</aside>
+
+        </section>
+        <section data-markdown><script type="text/template">
+            ## Подводные камни
+
+            * Параллелизм не всегда ускоряет работу
+              * Блокировки
+              * Накладные расходы
+            * Race Conditions
+              * [Thread-safety системных API](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Multithreading/ThreadSafetySummary/ThreadSafetySummary.html)
+            * Deadlock
+            * Priority Inversion
+            * Вызов dealloc на произвольном потоке
+
+            Note:
+
+            - стоит прибегать к параллелизму только когда это действительно необходимо и тщательно инкапсулировать его
+            - context switch может произойти в непредсказуемый момент времени
+            - невозможно нормально протестировать, т.к. порядок выполнения недетерминирован
+            - Пример с race condition
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Deadlock
+
+            ![Deadlock](14parallel/deadlock.png)
+
+            Note:
+
+            - На самом деле взаимосвязь может быть гораздо сложнее
+            - Как и многие проблемы в многопоточности, deadlock возникает в случайные моменты
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Параллелизм в iOS SDK
+
+            * `NSThread`
+            * GCD (Grand Central Dispatch)
+            * `NSOperation`
+            * `NSRunLoop`
+            * Синхронизация
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## `NSThread`
+
+            * Низкоуровневое API
+            * ОО-обертка над библиотекой pthreads (POSIX Threads)
+            * Не рекомендуется использовать
+            * Полезные методы:
+              * `-isMainThread`
+              * `-currentThread] threadDictionary]`
+
+            Note:
+
+            - Создание тредов, переключение тредов, даже существование треда, который не выполняет никаких действий связано с определенными накладными расходами
+            - Наиболее оптимальная организация пула тредов - сложная задача
+            - Пример: AFNetworking
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Grand Central Dispatch
+
+            * Очереди, пул тредов, блоки
+            * Serial / concurrent
+            * C-based, в Objective-C структуры GCD имеют семантику объектов
+            * Полезные функции
+              * `dispatch_(sync|async)`, `dispatch_once`, `dispatch_semaphore`, `dispatch_group`, `dispatch_after`, `dispatch_apply`, …
+
+            Note:
+
+            - Другая абстракция – вместо тредов блоки кода
+            - нужно стараться, чтобы задачи в GCD не блокировали тред, потому что это приведет к созданию новых тредов
+            - GCD как инструмент синхронизации
+            - Примеры GCDShowcase
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## `NSOperation`
+
+            * Очереди, операции
+            * Почти как GCD, но объекто-ориентированное
+            * Дополнительные возможности
+              * Отмена операций
+              * Готовность
+              * Ограничение количества одновременных операций
+              * Зависимости между операциями
+              * `completionBlock`
+
+            Note:
+
+            - Можно написать подкласс для какой-нибудь собственной задачи, block operations
+            - можно инкапсулировать сложную логику и взаимоувязывать ее на высоком уровне абстракции
+            - Пример: операция вычисления числа
+            - Пример: AFNetworking
+            - Пример: Earthquakes
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## `NSRunLoop`
+
+            ![NSRunLoop](14parallel/run-loop.png)
+
+            Note:
+
+            - позволяет эффективно организовать обработку событий в долгоживущем треде
+            - Демо – запустить обычное приложение и посмотреть содержимое mainRunLoop
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Синхронизация
+
+            * `NSLock` и его разновидности
+            * `@synchronized`
+            * GCD как средство синхронизации
+            * Atomic property
+            * Atomic operations
+            * Spin Lock
+
+            Note:
+
+            Демо – race conditions
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Демо
+
+            * Отладка в Xcode
+            * Долгая обработка в фоновом треде с помощью GCD
+            * Использование `NSOperation` для инкапсуляции сложной логики
+            * Использование `NSOperation` для организации высокоуровневой логики работы приложения
+            * Синхронизация
+
         </script></section>
         <section data-markdown><script type="text/template">
             ## Следующее занятие
 
-            * 2 марта, 18:30
-            * Знакомство с Xcode и Objective-C
+            * 
+            * 
         </script></section>
         <section class="dark-background"
             data-markdown
