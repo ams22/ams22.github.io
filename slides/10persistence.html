@@ -26,13 +26,12 @@
 
             \* Не влияет на оценку
 
-            Note:
-
-1.3.4 В начале занятия преподавателю рекомендуется напомнить студентам, какой части курса посвящена текущая лекция, кратко связать ее с предыдущей («На прошлом занятии мы закончили на том-то, а сегодня продолжим рассмотрение этой темы… переходим к следующему большому разделу….»). В конце лекции рекомендуется подытожить прошедшее занятие, повторить при необходимости основные тезисы, сделать краткий анонс на следующее занятие.
             </script>
         </section>
         <section data-markdown><script type="text/template">
             ## На прошлом занятии
+
+            * `UITableView` и `UICollectionView`
 
             Note:
 
@@ -42,6 +41,10 @@
         <section data-markdown><script type="text/template">
             ## На этом занятии
 
+            * NSCoding
+            * Core Data
+            * SQLite
+
             Note:
 
             - Сразу завести будильник на перерывы
@@ -50,28 +53,236 @@
         <section data-markdown><script type="text/template">
             ## Материалы
 
+            * [Archives and Serializations Programming Guide](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Archiving/Archiving.html)
+            * [Core Data Programming Guide](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/CoreData/)
+            * objc.io Issue 4 [Core Data](https://www.objc.io/issues/4-core-data/)
+
             Note:
 
             - Презентация как обычно доступна на сайте
         </script></section>
         <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-            ## Домашнее задание №0
+            ## `NSUserDefaults`
 
-            Срок 2 недели, оценка в рамках ДЗ №2
+            ```objectivec
+            @interface NSUserDefaults : NSObject
+
+            + (NSUserDefaults *)standardUserDefaults;
+
+            - (nullable id)objectForKey:(NSString *)defaultName;
+            - (void)setObject:(nullable id)value forKey:(NSString *)defaultName;
+            - (void)removeObjectForKey:(NSString *)defaultName;
+
+            - (void)registerDefaults:(NSDictionary<NSString *, id> *)registrationDictionary;
+
+            - (BOOL)synchronize;
+
+            @end
+            ```
+
+            Хранение пользовательских настроек
+
+            Note:
+
+            - Демо
+
+        </script></section>
+        <section>
+            <h2><code>NSUserDefaults</code></h2>
+
+            <ul class="plus-minus">
+              <li class="plus">Простота использования</li>
+              <li class="minus">Только для небольших данных</li>
+              <li class="minus">Глобальное пространство имен внутри приложения</li>
+              <li class="minus">Файл настроек делится между всеми компонентами приложения</li>
+          </ul>
+
+          <aside class="notes">
+              <ul>
+                  <li>Сторонние библиотеки могут влиять на производительность работы с NSUserDefaults</li>
+                  <li>Альтернатива - сохранение в отдельный файл</li>
+              </ul>
+          </aside>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## `NSCoding`
+
+            ```objectivec
+            @protocol NSCoding
+
+            - (void)encodeWithCoder:(NSCoder *)aCoder;
+            - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder;
+                      // NS_DESIGNATED_INITIALIZER
+
+            @end
+            ```
+
+            Note:
+
+            - Демо
+            - Формат хранения - plist
+        </script></section>
+        <section>
+            <h2><code>NSCoding</code></h2>
+
+            <ul class="plus-minus">
+              <li class="plus">Простота реализации и использования</li>
+              <li class="plus">Быстрый доступ после загрузки</li>
+              <li class="minus">Граф объектов хранится целиком в оперативной памяти</li>
+              <li class="minus">Граф объектов сохраняется и восстанавливается целиком единовременно</li>
+              <li class="minus">Миграция данных затруднительна</li>
+              <li class="minus">Не многопоточный</li> 
+              <li class="minus">Не мультипроцессный</li>
+            </ul>
+
+            <aside class="notes">
+                <ul>
+                    <li>То же самое, что маппинг из JSON, только поддержка уже встроена в SDK</li>
+                </ul>
+            </aside>
+        </section>
+        <section>
+            <section>
+                <h2>SQLite</h2>
+
+                <ul class="plus-minus">
+                    <li class="plus">Привычная реляционная модель</li>
+                    <li class="plus">Популярный Open-Source проект</li>
+                    <li class="plus">Запрашиваем только необходимое</li>
+                    <li class="plus">Удобная миграция</li>
+                    <li class="plus">Многопоточность и многопроцессность</li>
+                    <li class="plus">Кроссплатформенность</li>
+                    <li class="plus">Библиотека поставляется с SDK</li>
+                </ul>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Популярный OS проект означает: вылизанная проверенная временем реализация, хорошая функциональность</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h2>SQLite</h2>
+
+                <ul class="plus-minus">
+                    <li class="minus">Ручное отображение данных в объекты</li>
+                    <li class="minus">Требуется знание SQL и особенностей SQLite</li>
+                    <li class="minus">Реляционная модель не всегда удобна</li>
+                </ul>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Популярный OS проект означает: вылизанная проверенная временем реализация, хорошая функциональность</li>
+                    </ul>
+                </aside>
+            </section>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## SQLite + FMDB
+
+            ```objectivec
+            FMDatabase *db = [FMDatabase databaseWithPath:@"/tmp/tmp.db"];
+            if (![db open]) {
+                return;
+            }
+            FMResultSet *s = [db executeQuery:@"SELECT * FROM myTable"];
+            while ([s next]) {
+                // Получаем поля каждой записи
+            }
+            [db close];
+
+            ```
+
+            [FMDB: A Cocoa / Objective-C wrapper around SQLite](https://github.com/ccgus/fmdb)
+
+            Note:
+
+            - Библиотека sqlite - низкоуровневая, обычно используются обертки, например FMDB
+            - Демо
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Core Data
+
+            * Объектная БД поверх SQLite (или другого хранилища)
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Core Data
+
+            ![Простой стэк](10persistence/core-data-simple.png)
+
+            Note:
+
+            - Демо
+
+        </script></section>
+        <section>
+            <section>
+                <h2>Core Data</h2>
+
+                <ul class="plus-minus">
+                    <li class="plus">Интеграция с Xcode</li>
+                    <li class="plus">Object-relational mapping</li>
+                    <li class="plus">Автоматическая подгрузка данных</li>
+                    <li class="plus">Удобная миграция</li>
+                    <li class="plus">Многопоточность и многопроцессность</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Core Data</h2>
+
+                <ul class="plus-minus">
+                    <li class="minus">Переносимость: только Apple</li>
+                    <li class="minus">Оптимизировано не для всех use-case-ов</li>
+                    <li class="minus">Сложно использовать правильно</li>
+                </ul>
+
+                <aside class="notes">
+                    <ul>
+                        <li>Например, нет групповых апдейтов</li>
+                    </ul>
+                </aside>
+            </section>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## Альтернативы
+
+            * [CloudKit](https://developer.apple.com/icloud/), [Dropbox Datastore API](https://www.dropbox.com/developers-v1/datastore)
+            * [Couchbase Lite](https://github.com/couchbase/couchbase-lite-ios)
+            * [Realm](https://realm.io/)
+            * [LMDB](http://symas.com/mdb/)
+
+            Note:
+
+            - Couchbase - NoSQL document-based
+            - Realm - объектная с собственным движком хранения
+            - LBMD - очень быстрая key-value база
+            - Кроссплатформенность некоторых из этих баз
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Факультативно
+
+            * Синхронизация данных с удаленным хранилищем (objc.io Issue 10 [Syncing Data](https://www.objc.io/issues/10-syncing-data/))
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Домашнее задание №7
+
+            Реализовать в своем проекте сохранение данных на диск.
+
+            Срок 2 недели, оценка 6 баллов
         </script></section>
         <section data-markdown><script type="text/template">
             ## Следующее занятие
 
-            * 2 марта, 18:30
-            * Знакомство с Xcode и Objective-C
+            * Среда, 18:30
+            * Промежуточная защита проектов
         </script></section>
         <section class="dark-background"
             data-markdown
-            data-background="images/apple_cat.jpg">
+            data-background="images/ipod-cat.jpg">
             <script type="text/template">
             ## Отзывы и оценки
 
@@ -94,7 +305,7 @@ Reveal.initialize({
     center: true,
     slideNumber: true,
     transition: 'slide', // none/fade/slide/convex/concave/zoom
-    showNotes: false,
+    showNotes: true,
 
     // Optional reveal.js plugins
     dependencies: [

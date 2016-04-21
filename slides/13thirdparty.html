@@ -26,9 +26,6 @@
 
             \* Не влияет на оценку
 
-            Note:
-
-1.3.4 В начале занятия преподавателю рекомендуется напомнить студентам, какой части курса посвящена текущая лекция, кратко связать ее с предыдущей («На прошлом занятии мы закончили на том-то, а сегодня продолжим рассмотрение этой темы… переходим к следующему большому разделу….»). В конце лекции рекомендуется подытожить прошедшее занятие, повторить при необходимости основные тезисы, сделать краткий анонс на следующее занятие.
             </script>
         </section>
         <section data-markdown><script type="text/template">
@@ -50,18 +47,154 @@
         <section data-markdown><script type="text/template">
             ## Материалы
 
+            * objc.io [Build Tools](https://www.objc.io/issues/6-build-tools/)
+
             Note:
 
             - Презентация как обычно доступна на сайте
         </script></section>
         <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-        </script></section>
-        <section data-markdown><script type="text/template">
-            ## Домашнее задание №0
+            ## Почему стоит использовать
 
-            Срок 2 недели, оценка в рамках ДЗ №2
+            * Экономия времени на написание и поддержку
+            * Возможность поучаствовать в Open-Source разработке
+
+            Note:
+
+            - Хорошо отлаженный и протестированный множеством пользователей в течение долгого времени код
+            - Прежде, чем что-либо писать, посмотрите, а не написал ли это кто-то другой
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Недостатки внешних зависимостей
+
+            * Не все проекты хорошо написаны
+            * Не все проекты поддерживаются автором и сообществом
+
+        </script></section>
+        <section>
+            <section data-markdown><script type="text/template">
+                ## Этапы сборки
+
+                ![Build steps](13thirdparty/build-process.svg) <!-- .element: style="height: 70%" -->
+
+
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Этапы сборки
+
+                * Препроцессор
+                * Компиляция
+                * Линковка
+                * Создание архива
+                * Криптографическая подпись
+
+                Note:
+
+                - Слайсы для разных архитектур - fat
+
+            </script></section>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## Подключение к проекту
+
+            * Добавление исходных файлов
+            * Подключение подпроекта
+            * Подключение статической библиотеки
+            * Подключение динамической библиотеки
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Git
+
+            * Submodules
+            * Subtree
+            * Просто так
+
+        </script></section>
+        <section>
+            <section data-markdown><script type="text/template">
+                ## CocoaPods
+
+                * Менеджер зависимостей
+                * Стандарт де-факто
+                * Поддержка Swift и Objective-C
+                * Статическая и динамическая линковка
+
+                Note:
+
+                - Огромное количество библиотек
+                - Демо
+
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Недостатки CocoaPods
+
+                * Плохо масштабируется
+
+                Note:
+
+                - Рассказать про наш опыт использования CocoaPods
+
+            </script></section>
+            <section data-markdown><script type="text/template">
+                ## Создание собственного пода
+            </script></section>
+        </section>
+        <section data-markdown><script type="text/template">
+            ## Динамические библиотеки
+
+            * Преимущества
+            * Недостатки
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Carthage
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Swift Package Manager
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Сишные библиотеки, которые не писались изначально для Objective-C
+
+            * Кросс-компиляция
+            * FAT статическая библиотека
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Обзор популярных подов
+
+            * [Trending CocoaPods](https://trendingcocoapods.github.io/)
+            * [What the pod](http://www.whatthepod.com/)
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Стандартные фреймворки
+
+            Note:
+
+            - Идеи из NSHipster
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Как находить сторонние библиотеки
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## На что обращать внимание
+
+            * Риски
+            * Активно ли ведется разработка
+            * Сколько звездочек и форков
+            * Просмотреть Issues
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Домашнее задание №10
+
+            Срок 1 неделя, оценка 4 балла
         </script></section>
         <section data-markdown><script type="text/template">
             ## Следующее занятие
