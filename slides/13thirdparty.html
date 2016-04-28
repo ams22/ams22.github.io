@@ -108,8 +108,15 @@
             ## Git
 
             * Submodules
-            * Subtree
+            * [Subtree](https://github.com/apenwarr/git-subtree/blob/master/git-subtree.txt)
             * Просто так
+
+            Note:
+
+            - Плюсы и минусы
+            - Во многих больших компаниях все хранят в едином (монолитном) репозитории
+            - Хранить исходники сторонних библиотек вместе или загружать по необходимости?
+            - Скандал в npm
 
         </script></section>
         <section>
@@ -131,6 +138,7 @@
                 ## Недостатки CocoaPods
 
                 * Плохо масштабируется
+                * Сам редактирует файл проекта
 
                 Note:
 
@@ -141,19 +149,36 @@
                 ## Создание собственного пода
             </script></section>
         </section>
-        <section data-markdown><script type="text/template">
-            ## Динамические библиотеки
+        <section>
+            <h2>Динамические библиотеки</h2>
 
-            * Преимущества
-            * Недостатки
+            <ul class="plus-minus">
+                <li class="plus">Меньше места при использовании расширений</li>
+                <li class="plus">Можно подгружать по необходимости</li>
+                <li class="plus">Возможность обновления библиотеки без перекомпиляции приложения</li>
+                <li class="minus">Требуется отдельно подписывать</li>
+                <li class="minus">Возможность появилась недавно</li>
+            </ul>
 
-        </script></section>
+            <aside class="notes">
+                <ul>
+                    <li>Баги: например, Swift пока не имеет binary compatibility, поэтому нельзя использовать фреймворки, скомпилированные на другой машине</li>
+                </ul>
+            </aside>
+        </section>
         <section data-markdown><script type="text/template">
             ## Carthage
+
+            * Простой, децентрализованный менеджер зависимостей
+            * Только динамические библиотеки
+            * Не правит файл проекта
 
         </script></section>
         <section data-markdown><script type="text/template">
             ## Swift Package Manager
+
+            * Официальное решение от Apple
+            * Work in progress
 
         </script></section>
         <section data-markdown><script type="text/template">
@@ -227,7 +252,7 @@ Reveal.initialize({
     center: true,
     slideNumber: true,
     transition: 'slide', // none/fade/slide/convex/concave/zoom
-    showNotes: false,
+    showNotes: true,
 
     // Optional reveal.js plugins
     dependencies: [
