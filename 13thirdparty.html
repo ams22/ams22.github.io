@@ -31,6 +31,8 @@
         <section data-markdown><script type="text/template">
             ## На прошлом занятии
 
+            * Хранение данных
+
             Note:
 
             - Возникли ли какие-нибудь вопросы по этим темам?
@@ -38,6 +40,11 @@
         </script></section>
         <section data-markdown><script type="text/template">
             ## На этом занятии
+
+            * Промежуточная защита
+            * Сборка проекта
+            * CocoaPods
+            * Carthage
 
             Note:
 
@@ -49,6 +56,7 @@
 
             * objc.io [Build Tools](https://www.objc.io/issues/6-build-tools/)
             * [Linking Objective-C Code](http://pewpewthespells.com/blog/objc_linker_flags.html)
+            * [CocoaPods: Getting Started](https://guides.cocoapods.org/using/getting-started.html)
 
             Note:
 
@@ -104,6 +112,11 @@
             * Подключение статической библиотеки
             * Подключение динамической библиотеки
 
+            Note: 
+
+            - Показать: добавление исходников, подпроект
+            - Какие проблемы могут возникнуть: no-arc, варнинги
+
         </script></section>
         <section data-markdown><script type="text/template">
             ## Git
@@ -133,6 +146,7 @@
 
                 - Огромное количество библиотек
                 - Демо
+                - Посмотреть в документации что можно задать в Podfile
 
             </script></section>
             <section data-markdown><script type="text/template">
@@ -147,7 +161,9 @@
 
             </script></section>
             <section data-markdown><script type="text/template">
-                ## Создание собственного пода
+                ## Создание пода
+
+                [Making CocoaPods](https://guides.cocoapods.org/making/index.html)
             </script></section>
         </section>
         <section>
@@ -181,12 +197,9 @@
             * Официальное решение от Apple
             * Work in progress
 
-        </script></section>
-        <section data-markdown><script type="text/template">
-            ## Сишные библиотеки, которые не писались изначально для Objective-C
+            Note:
 
-            * Кросс-компиляция
-            * FAT статическая библиотека
+            - Доступно в development snapshots свифта
 
         </script></section>
         <section data-markdown><script type="text/template">
@@ -195,17 +208,22 @@
             * [Trending CocoaPods](https://trendingcocoapods.github.io/)
             * [What the pod](http://www.whatthepod.com/)
 
+            Note:
+
+            - [GPUImage](https://github.com/BradLarson/GPUImage)
+
         </script></section>
         <section data-markdown><script type="text/template">
-            ## Стандартные фреймворки
+            ## Сишные библиотеки
+
+            * Кросс-компиляция
+            * FAT статическая библиотека
 
             Note:
 
-            - Идеи из NSHipster
-
-        </script></section>
-        <section data-markdown><script type="text/template">
-            ## Как находить сторонние библиотеки
+            - которые не писались изначально для Objective-C
+            - Пример: ffmpeg
+            - OpenCV: https://github.com/chrismarcellino/edgycamera
 
         </script></section>
         <section data-markdown><script type="text/template">
@@ -220,13 +238,15 @@
         <section data-markdown><script type="text/template">
             ## Домашнее задание №10
 
+            Подключить к проекту какую-нибудь внешнюю библиотеку через CocoaPods.
+
             Срок 1 неделя, оценка 4 балла
         </script></section>
         <section data-markdown><script type="text/template">
             ## Следующее занятие
 
-            * 2 марта, 18:30
-            * Знакомство с Xcode и Objective-C
+            * 11 мая, 18:30
+            * РК2, разбор ДЗ
         </script></section>
         <section class="dark-background"
             data-markdown
@@ -253,7 +273,7 @@ Reveal.initialize({
     center: true,
     slideNumber: true,
     transition: 'slide', // none/fade/slide/convex/concave/zoom
-    showNotes: true,
+    showNotes: false,
 
     // Optional reveal.js plugins
     dependencies: [
