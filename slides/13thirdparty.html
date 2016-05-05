@@ -31,6 +31,8 @@
         <section data-markdown><script type="text/template">
             ## На прошлом занятии
 
+            * Хранение данных
+
             Note:
 
             - Возникли ли какие-нибудь вопросы по этим темам?
@@ -38,6 +40,11 @@
         </script></section>
         <section data-markdown><script type="text/template">
             ## На этом занятии
+
+            * Промежуточная защита
+            * Сборка проекта
+            * CocoaPods
+            * Carthage
 
             Note:
 
@@ -48,6 +55,8 @@
             ## Материалы
 
             * objc.io [Build Tools](https://www.objc.io/issues/6-build-tools/)
+            * [Linking Objective-C Code](http://pewpewthespells.com/blog/objc_linker_flags.html)
+            * [CocoaPods: Getting Started](https://guides.cocoapods.org/using/getting-started.html)
 
             Note:
 
@@ -103,13 +112,25 @@
             * Подключение статической библиотеки
             * Подключение динамической библиотеки
 
+            Note: 
+
+            - Показать: добавление исходников, подпроект
+            - Какие проблемы могут возникнуть: no-arc, варнинги
+
         </script></section>
         <section data-markdown><script type="text/template">
             ## Git
 
             * Submodules
-            * Subtree
+            * [Subtree](https://github.com/apenwarr/git-subtree/blob/master/git-subtree.txt)
             * Просто так
+
+            Note:
+
+            - Плюсы и минусы
+            - Во многих больших компаниях все хранят в едином (монолитном) репозитории
+            - Хранить исходники сторонних библиотек вместе или загружать по необходимости?
+            - Скандал в npm
 
         </script></section>
         <section>
@@ -125,12 +146,14 @@
 
                 - Огромное количество библиотек
                 - Демо
+                - Посмотреть в документации что можно задать в Podfile
 
             </script></section>
             <section data-markdown><script type="text/template">
                 ## Недостатки CocoaPods
 
                 * Плохо масштабируется
+                * Сам редактирует файл проекта
 
                 Note:
 
@@ -138,29 +161,45 @@
 
             </script></section>
             <section data-markdown><script type="text/template">
-                ## Создание собственного пода
+                ## Создание пода
+
+                [Making CocoaPods](https://guides.cocoapods.org/making/index.html)
             </script></section>
         </section>
-        <section data-markdown><script type="text/template">
-            ## Динамические библиотеки
+        <section>
+            <h2>Динамические библиотеки</h2>
 
-            * Преимущества
-            * Недостатки
+            <ul class="plus-minus">
+                <li class="plus">Меньше места при использовании расширений</li>
+                <li class="plus">Можно подгружать по необходимости</li>
+                <li class="plus">Возможность обновления библиотеки без перекомпиляции приложения</li>
+                <li class="minus">Требуется отдельно подписывать</li>
+                <li class="minus">Возможность появилась недавно</li>
+            </ul>
 
-        </script></section>
+            <aside class="notes">
+                <ul>
+                    <li>Баги: например, Swift пока не имеет binary compatibility, поэтому нельзя использовать фреймворки, скомпилированные на другой машине</li>
+                </ul>
+            </aside>
+        </section>
         <section data-markdown><script type="text/template">
             ## Carthage
+
+            * Простой, децентрализованный менеджер зависимостей
+            * Только динамические библиотеки
+            * Не правит файл проекта
 
         </script></section>
         <section data-markdown><script type="text/template">
             ## Swift Package Manager
 
-        </script></section>
-        <section data-markdown><script type="text/template">
-            ## Сишные библиотеки, которые не писались изначально для Objective-C
+            * Официальное решение от Apple
+            * Work in progress
 
-            * Кросс-компиляция
-            * FAT статическая библиотека
+            Note:
+
+            - Доступно в development snapshots свифта
 
         </script></section>
         <section data-markdown><script type="text/template">
@@ -169,17 +208,22 @@
             * [Trending CocoaPods](https://trendingcocoapods.github.io/)
             * [What the pod](http://www.whatthepod.com/)
 
+            Note:
+
+            - [GPUImage](https://github.com/BradLarson/GPUImage)
+
         </script></section>
         <section data-markdown><script type="text/template">
-            ## Стандартные фреймворки
+            ## Сишные библиотеки
+
+            * Кросс-компиляция
+            * FAT статическая библиотека
 
             Note:
 
-            - Идеи из NSHipster
-
-        </script></section>
-        <section data-markdown><script type="text/template">
-            ## Как находить сторонние библиотеки
+            - которые не писались изначально для Objective-C
+            - Пример: ffmpeg
+            - OpenCV: https://github.com/chrismarcellino/edgycamera
 
         </script></section>
         <section data-markdown><script type="text/template">
@@ -194,13 +238,15 @@
         <section data-markdown><script type="text/template">
             ## Домашнее задание №10
 
+            Подключить к проекту какую-нибудь внешнюю библиотеку через CocoaPods.
+
             Срок 1 неделя, оценка 4 балла
         </script></section>
         <section data-markdown><script type="text/template">
             ## Следующее занятие
 
-            * 2 марта, 18:30
-            * Знакомство с Xcode и Objective-C
+            * 11 мая, 18:30
+            * РК2, разбор ДЗ
         </script></section>
         <section class="dark-background"
             data-markdown

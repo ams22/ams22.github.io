@@ -204,7 +204,12 @@
         <section data-markdown><script type="text/template">
             ## Core Data
 
-            * Объектная БД поверх SQLite (или другого хранилища)
+            * Управление объектами модельного слоя
+            * Сохранение в SQLite (или другое хранилище)
+            * Поддержка миграций
+            * Интеграция с UITableView
+            * Запросы, похожие на SQL
+            * Разрешение конфликтов
 
         </script></section>
         <section data-markdown><script type="text/template">
@@ -215,6 +220,15 @@
             Note:
 
             - Демо
+
+        </script></section>
+        <section data-markdown><script type="text/template">
+            ## Особенности
+
+            * Ленивая подгрузка объектов из хранилища
+            * Faults
+            * Абстрактные сущности и наследование
+            * Удаление объектов
 
         </script></section>
         <section>
@@ -305,7 +319,7 @@ Reveal.initialize({
     center: true,
     slideNumber: true,
     transition: 'slide', // none/fade/slide/convex/concave/zoom
-    showNotes: true,
+    showNotes: false,
 
     // Optional reveal.js plugins
     dependencies: [
